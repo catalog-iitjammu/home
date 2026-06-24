@@ -1,52 +1,44 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { NAV_TREE } from '../data/mock';
+import { useCatalog, useYear } from '../context/CatalogContext';
 
 const SectionPage = ({ slug }) => {
-  const node = NAV_TREE.find((n) => n.slug === slug);
+  const { navTree } = useCatalog();
+  const year = useYear();
+  const node = navTree.find((n) => n.slug === slug);
   if (!node) return null;
 
+  const linkBase = `/en/${year}/catalog`;
+
   const contentMap = {
-    'information-about-gcet': {
-      title: 'Information about GCET',
+    'information-about-iitjammu': {
+      title: 'Information about IIT Jammu',
       body: (
         <>
           <p>
-            GCET College of Engineering is a premier institute dedicated to producing innovative,
-            socially aware, and technically competent engineers. Established in 1984 in V.V. Nagar,
-            Gujarat, GCET combines rigorous academics with hands-on, project-based learning.
+            The Indian Institute of Technology Jammu (IIT Jammu) is an autonomous Institute of
+            National Importance established in 2016 by an Act of the Parliament of India. The
+            permanent campus is located at Jagti, Nagrota, in the Union Territory of Jammu and
+            Kashmir.
           </p>
           <p>
-            Our undergraduate programs span Computer Science, Information Technology, Electronics,
-            Mechanical, Civil, and Electrical engineering. Postgraduate and doctoral programs
-            extend research opportunities across all departments.
+            IIT Jammu offers a portfolio of undergraduate (B.Tech), postgraduate (M.Tech, M.Sc.),
+            and doctoral (Ph.D.) programs across engineering, sciences, and humanities, supported
+            by research centers in AI, sustainability, advanced materials, and 5G/6G
+            communications.
           </p>
           <h3 className="font-serif text-[#0a4f8c] text-[20px] font-semibold mt-6 mb-2">
             Quick Facts
           </h3>
           <table className="catalog-table w-full">
             <tbody>
-              <tr>
-                <td className="font-semibold">Founded</td>
-                <td>1984</td>
-              </tr>
-              <tr>
-                <td className="font-semibold">Location</td>
-                <td>V.V. Nagar, Anand, Gujarat, India</td>
-              </tr>
-              <tr>
-                <td className="font-semibold">Affiliation</td>
-                <td>Gujarat Technological University (GTU)</td>
-              </tr>
-              <tr>
-                <td className="font-semibold">Accreditation</td>
-                <td>NAAC A+, NBA accredited programs</td>
-              </tr>
-              <tr>
-                <td className="font-semibold">Student Body</td>
-                <td>~3,200 undergraduate & graduate students</td>
-              </tr>
+              <tr><td className="font-semibold">Founded</td><td>2016</td></tr>
+              <tr><td className="font-semibold">Status</td><td>Institute of National Importance (by Act of Parliament)</td></tr>
+              <tr><td className="font-semibold">Location</td><td>Jagti, Nagrota, Jammu & Kashmir, India</td></tr>
+              <tr><td className="font-semibold">Campus Size</td><td>~400 acres in the Shivalik foothills</td></tr>
+              <tr><td className="font-semibold">Director</td><td>Prof. Manoj Singh Gaur</td></tr>
+              <tr><td className="font-semibold">Student Body</td><td>~1,800 students (B.Tech, M.Tech, M.Sc., Ph.D.)</td></tr>
             </tbody>
           </table>
         </>
@@ -57,29 +49,35 @@ const SectionPage = ({ slug }) => {
       body: (
         <>
           <p>
-            GCET offers a portfolio of undergraduate (B.Tech), postgraduate (M.Tech) and doctoral
-            (Ph.D.) programs. All degrees require successful completion of program-specific core
-            courses, electives, capstone experiences, and a minimum cumulative GPA of 6.0/10.
+            IIT Jammu offers a portfolio of undergraduate (B.Tech), postgraduate (M.Tech and
+            M.Sc.) and doctoral (Ph.D.) programs. All degrees require successful completion of
+            program-specific core courses, electives, capstone experiences, and a minimum
+            cumulative GPA of 5.0/10.
           </p>
           <h3 className="font-serif text-[#0a4f8c] text-[20px] font-semibold mt-6 mb-2">
             Degree Requirements at a Glance
           </h3>
           <table className="catalog-table w-full">
             <thead>
-              <tr>
-                <th>Program</th>
-                <th>Duration</th>
-                <th>Credits Required</th>
-                <th>Capstone</th>
-              </tr>
+              <tr><th>Program</th><th>Duration</th><th>Credits Required</th><th>Capstone</th></tr>
             </thead>
             <tbody>
-              <tr><td>B.Tech</td><td>4 years</td><td>160</td><td>Required (Year 4)</td></tr>
-              <tr><td>M.Tech</td><td>2 years</td><td>80</td><td>Thesis</td></tr>
+              <tr><td>B.Tech</td><td>4 years</td><td>~160</td><td>Required (Year 4)</td></tr>
+              <tr><td>M.Tech</td><td>2 years</td><td>~64</td><td>Thesis</td></tr>
+              <tr><td>M.Sc.</td><td>2 years</td><td>~60</td><td>Project</td></tr>
               <tr><td>Ph.D.</td><td>3–5 years</td><td>Coursework + Dissertation</td><td>Dissertation</td></tr>
-              <tr><td>Minor</td><td>Concurrent</td><td>20</td><td>—</td></tr>
+              <tr><td>Minor / Honors</td><td>Concurrent</td><td>18–20</td><td>—</td></tr>
             </tbody>
           </table>
+          <ul className="list-none mt-6 space-y-2">
+            {node.children.map((c) => (
+              <li key={c.slug}>
+                <Link className="text-[#0a4f8c] hover:underline" to={`${linkBase}/${node.slug}/${c.slug}`}>
+                  {c.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </>
       ),
     },
@@ -100,40 +98,36 @@ const SectionPage = ({ slug }) => {
             <a className="text-[#0a4f8c] underline" href="#browser">
               course browser
             </a>{' '}
-            for up-to-date information including faculty teaching assignments. For more
-            information about a specific course, talk to the course instructor listed in the
-            current or previous registration booklets. Prerequisites and co-requisites may
-            occasionally be waived with permission of the course instructor.
+            for up-to-date information including faculty teaching assignments.
           </p>
 
           <h3 className="font-serif text-[#0a4f8c] text-[20px] font-semibold mt-6 mb-2">
             Course Numbering Nomenclature
           </h3>
           <p>
-            Course numbers are composed of an alphabetic prefix and a numeric suffix. The alphabetic
-            prefix indicates the primary area of the course, according to the following table.
+            Course numbers are composed of an alphabetic prefix (3 letters) followed by a 4-digit
+            numeric suffix. The alphabetic prefix indicates the primary area of the course.
           </p>
           <table className="catalog-table w-full">
-            <thead>
-              <tr><th>Alphabetic Prefix</th><th>Primary Area</th></tr>
-            </thead>
+            <thead><tr><th>Alphabetic Prefix</th><th>Primary Area</th></tr></thead>
             <tbody>
-              <tr><td>CSE</td><td>Computer Science & Engineering</td></tr>
-              <tr><td>IT</td><td>Information Technology</td></tr>
-              <tr><td>ECE</td><td>Electronics & Communication</td></tr>
-              <tr><td>ME</td><td>Mechanical Engineering</td></tr>
-              <tr><td>CE</td><td>Civil Engineering</td></tr>
-              <tr><td>EE</td><td>Electrical Engineering</td></tr>
-              <tr><td>MTH</td><td>Mathematics</td></tr>
-              <tr><td>HSS</td><td>Humanities & Social Sciences</td></tr>
+              <tr><td>CSL / CSP</td><td>Computer Science & Engineering</td></tr>
+              <tr><td>ECL / ECP</td><td>Electronics & Communication</td></tr>
+              <tr><td>EEL / EEP</td><td>Electrical Engineering</td></tr>
+              <tr><td>MEL / MEP</td><td>Mechanical Engineering</td></tr>
+              <tr><td>CEL / CEP</td><td>Civil Engineering</td></tr>
+              <tr><td>CHL / CHP</td><td>Chemical Engineering</td></tr>
+              <tr><td>MSL / MSP</td><td>Materials Science & Engineering</td></tr>
+              <tr><td>MAL</td><td>Mathematics</td></tr>
+              <tr><td>PHL</td><td>Physics</td></tr>
+              <tr><td>CYL</td><td>Chemistry</td></tr>
+              <tr><td>HUL</td><td>Humanities & Social Sciences</td></tr>
             </tbody>
           </table>
 
           <p className="mt-4">The first digit of the numeric suffix indicates the nominal level of a course.</p>
           <table className="catalog-table w-full">
-            <thead>
-              <tr><th>Numeric Suffix</th><th>Level</th></tr>
-            </thead>
+            <thead><tr><th>Numeric Suffix</th><th>Level</th></tr></thead>
             <tbody>
               <tr><td>0XXX</td><td>Any</td></tr>
               <tr><td>1XXX</td><td>Introductory</td></tr>
@@ -147,37 +141,20 @@ const SectionPage = ({ slug }) => {
             Hours/Week Nomenclature
           </h3>
           <p>
-            At GCET, 1 credit is equal to 3 hours of work per week. The standard calendar is 15
-            weeks per semester. To better allow teaching staff, facilities schedulers, and students
-            to manage time, the expected hours per week is indicated by a triplet:
-            (Contact)–(Non‑Contact)–(Preparation).
+            At IIT Jammu, 1 credit is equal to 3 hours of work per week. The standard calendar is
+            16 weeks per semester. Hours per week are indicated by the triplet:
+            (Contact)–(Non-Contact)–(Preparation).
           </p>
           <ul className="list-disc pl-6 my-3">
-            <li><b>Contact:</b> hours per week in scheduled classes with the instructor.</li>
-            <li><b>Non-Contact:</b> hours per week working in scheduled school facilities.</li>
-            <li><b>Preparation:</b> hours per week a well-prepared student should spend studying outside class.</li>
+            <li><b>Contact:</b> scheduled class hours with the instructor.</li>
+            <li><b>Non-Contact:</b> scheduled lab / studio hours.</li>
+            <li><b>Preparation:</b> independent study and homework.</li>
           </ul>
-          <p>
-            For example, HSS1101 Technical Communication is a 3‑0‑6 course — three hours in class
-            and six hours of outside-of-class preparation.
-          </p>
-
-          <h3 className="font-serif text-[#0a4f8c] text-[20px] font-semibold mt-6 mb-2">
-            Activities Not Eligible for Credit
-          </h3>
-          <p>
-            Areas of student engagement not eligible for credit include clubs, competition teams,
-            community service, and recreation. We encourage students to engage with these as part
-            of the broader learning continuum.
-          </p>
 
           <ul className="list-none mt-6 space-y-2">
             {node.children.map((c) => (
               <li key={c.slug}>
-                <Link
-                  to={`/en/2024-25/catalog/${node.slug}/${c.slug}`}
-                  className="text-[#0a4f8c] hover:underline"
-                >
+                <Link to={`${linkBase}/${node.slug}/${c.slug}`} className="text-[#0a4f8c] hover:underline">
                   {c.label}
                 </Link>
               </li>
@@ -191,17 +168,13 @@ const SectionPage = ({ slug }) => {
       body: (
         <>
           <p>
-            Academic policies at GCET are intended to support student learning while ensuring
-            integrity, fairness, and consistency across programs. The sections below outline the
-            principal regulations governing admissions, grading, attendance, and academic conduct.
+            Academic policies at IIT Jammu are designed to support student learning while ensuring
+            integrity, fairness, and consistency across programs.
           </p>
           <ul className="list-none mt-4 space-y-2">
             {node.children.map((c) => (
               <li key={c.slug}>
-                <Link
-                  to={`/en/2024-25/catalog/${node.slug}/${c.slug}`}
-                  className="text-[#0a4f8c] hover:underline"
-                >
+                <Link to={`${linkBase}/${node.slug}/${c.slug}`} className="text-[#0a4f8c] hover:underline">
                   {c.label}
                 </Link>
               </li>
@@ -214,22 +187,16 @@ const SectionPage = ({ slug }) => {
       title: 'Table of Contents',
       body: (
         <ul className="space-y-3">
-          {NAV_TREE.map((n) => (
+          {navTree.map((n) => (
             <li key={n.slug}>
-              <Link
-                to={`/en/2024-25/catalog/${n.slug}`}
-                className="text-[#0a4f8c] font-semibold hover:underline"
-              >
+              <Link to={`${linkBase}/${n.slug}`} className="text-[#0a4f8c] font-semibold hover:underline">
                 {n.label}
               </Link>
               {n.children && (
                 <ul className="list-disc pl-6 mt-1">
                   {n.children.map((c) => (
                     <li key={c.slug}>
-                      <Link
-                        to={`/en/2024-25/catalog/${n.slug}/${c.slug}`}
-                        className="text-[#0a4f8c] hover:underline"
-                      >
+                      <Link to={`${linkBase}/${n.slug}/${c.slug}`} className="text-[#0a4f8c] hover:underline">
                         {c.label}
                       </Link>
                     </li>
@@ -244,6 +211,7 @@ const SectionPage = ({ slug }) => {
   };
 
   const data = contentMap[slug];
+  if (!data) return null;
 
   return (
     <Layout>

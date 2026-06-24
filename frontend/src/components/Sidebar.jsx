@@ -1,15 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ChevronRight } from 'lucide-react';
-import { NAV_TREE, CATALOG_VERSIONS } from '../data/mock';
+import { useCatalog, useYear } from '../context/CatalogContext';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const year = useYear();
+  const { navTree, versions, currentVersion } = useCatalog();
   const [openSet, setOpenSet] = useState(new Set());
   const [scope, setScope] = useState('Entire Catalog');
   const [query, setQuery] = useState('');
-  const [version, setVersion] = useState('Catalog 2024-25');
+  const [version, setVersion] = useState(currentVersion);
+
+  useEffect(() => {
+    setVersion(currentVersion);
+  }, [currentVersion]);
 
   const toggle = (slug) => {
     setOpenSet((prev) => {
@@ -22,13 +28,15 @@ const Sidebar = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const q = encodeURIComponent(query.trim());
+    const q = query.trim();
     if (!q) return;
-    navigate(`/en/2024-25/catalog/search?q=${q}&scope=${encodeURIComponent(scope)}`);
+    navigate(
+      `/en/${year}/catalog/search?q=${encodeURIComponent(q)}&scope=${encodeURIComponent(scope)}`,
+    );
   };
 
   const isOpen = (node) => {
-    const fullPath = `/en/2024-25/catalog/${node.slug}`;
+    const fullPath = `/en/${year}/catalog/${node.slug}`;
     return openSet.has(node.slug) || location.pathname.startsWith(fullPath);
   };
 
@@ -49,6 +57,7 @@ const Sidebar = () => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search the catalog…"
               className="flex-1 text-[13px] font-serif outline-none bg-transparent"
               aria-label="Search"
             />
@@ -74,13 +83,13 @@ const Sidebar = () => {
         </form>
       </div>
 
-      {/* Contents tree (2-level flat render) */}
+      {/* Contents tree */}
       <div className="mb-8">
         <h2 className="font-serif text-[20px] text-[#0a4f8c] font-semibold mb-2">Contents</h2>
         <ul>
-          {NAV_TREE.map((node) => {
+          {navTree.map((node) => {
             const hasChildren = node.children && node.children.length > 0;
-            const fullPath = `/en/2024-25/catalog/${node.slug}`;
+            const fullPath = `/en/${year}/catalog/${node.slug}`;
             const open = isOpen(node);
             return (
               <li key={node.slug} className="my-1">
@@ -114,7 +123,7 @@ const Sidebar = () => {
                 {hasChildren && open && (
                   <ul className="ml-5 mt-1 border-l border-gray-200 pl-2">
                     {node.children.map((child) => {
-                      const childPath = `/en/2024-25/catalog/${node.slug}/${child.slug}`;
+                      const childPath = `/en/${year}/catalog/${node.slug}/${child.slug}`;
                       return (
                         <li key={child.slug} className="my-1 flex items-start gap-1">
                           <span className="inline-block w-3 mt-[5px]" />
@@ -144,7 +153,7 @@ const Sidebar = () => {
         <ul className="space-y-1">
           <li>
             <Link
-              to="/en/2024-25/catalog"
+              to={`/en/${year}/catalog`}
               className="text-[14px] font-serif text-[#0a4f8c] hover:underline"
             >
               Catalog Home
@@ -186,10 +195,9 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Hidden version selector here matches Olin pattern; main one is in TopBar */}
       <div className="hidden">
         <select value={version} onChange={(e) => setVersion(e.target.value)}>
-          {CATALOG_VERSIONS.map((v) => (
+          {versions.map((v) => (
             <option key={v}>{v}</option>
           ))}
         </select>

@@ -1,13 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { DEPARTMENTS, NAV_TREE } from '../data/mock';
+import { catalogApi } from '../api/client';
+import { useCatalog, useYear } from '../context/CatalogContext';
 
 const DepartmentPage = () => {
   const { dept } = useParams();
-  const data = DEPARTMENTS[dept];
+  const year = useYear();
+  const { navTree } = useCatalog();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!data) {
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    setError(null);
+    catalogApi
+      .getDepartment(dept)
+      .then((d) => alive && setData(d))
+      .catch((e) => alive && setError(e))
+      .finally(() => alive && setLoading(false));
+    return () => {
+      alive = false;
+    };
+  }, [dept]);
+
+  if (loading) {
+    return (
+      <Layout>
+        <p className="text-gray-500">Loading department…</p>
+      </Layout>
+    );
+  }
+
+  if (error || !data) {
     return (
       <Layout>
         <h1 className="font-serif text-[28px] text-[#0a4f8c] mb-4">Department not found</h1>
@@ -16,7 +43,7 @@ const DepartmentPage = () => {
     );
   }
 
-  const parent = NAV_TREE.find((n) => n.slug === 'courses-credits-hours');
+  const parent = navTree.find((n) => n.slug === 'courses-credits-hours');
   const siblings = parent ? parent.children : [];
 
   return (
@@ -33,7 +60,7 @@ const DepartmentPage = () => {
             <th style={{ width: '110px' }}>Code</th>
             <th>Course Title</th>
             <th style={{ width: '90px' }}>Credits</th>
-            <th style={{ width: '110px' }}>C‑NC‑P</th>
+            <th style={{ width: '110px' }}>C-NC-P</th>
           </tr>
         </thead>
         <tbody>
@@ -62,7 +89,7 @@ const DepartmentPage = () => {
               <li key={s.slug}>
                 <Link
                   className="text-[#0a4f8c] hover:underline"
-                  to={`/en/2024-25/catalog/courses-credits-hours/${s.slug}`}
+                  to={`/en/${year}/catalog/courses-credits-hours/${s.slug}`}
                 >
                   {s.label}
                 </Link>

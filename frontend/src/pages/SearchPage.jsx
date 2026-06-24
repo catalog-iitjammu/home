@@ -1,60 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { NAV_TREE, DEPARTMENTS } from '../data/mock';
+import { catalogApi } from '../api/client';
+import { useYear } from '../context/CatalogContext';
 
 const SearchPage = () => {
   const [params] = useSearchParams();
-  const q = (params.get('q') || '').toLowerCase();
+  const q = params.get('q') || '';
   const scope = params.get('scope') || 'Entire Catalog';
+  const year = useYear();
 
-  const results = [];
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  if (q) {
-    if (scope === 'Entire Catalog' || scope === 'Programs') {
-      NAV_TREE.forEach((n) => {
-        if (n.label.toLowerCase().includes(q)) {
-          results.push({
-            label: n.label,
-            url: `/en/2024-25/catalog/${n.slug}`,
-            type: 'Section',
-          });
-        }
-        (n.children || []).forEach((c) => {
-          if (c.label.toLowerCase().includes(q)) {
-            results.push({
-              label: `${n.label} › ${c.label}`,
-              url: `/en/2024-25/catalog/${n.slug}/${c.slug}`,
-              type: 'Page',
-            });
-          }
-        });
-      });
+  useEffect(() => {
+    let alive = true;
+    if (!q) {
+      setResults([]);
+      return;
     }
-    if (scope === 'Entire Catalog' || scope === 'Courses') {
-      Object.entries(DEPARTMENTS).forEach(([slug, d]) => {
-        d.courses.forEach((c) => {
-          if (
-            c.code.toLowerCase().includes(q) ||
-            c.title.toLowerCase().includes(q) ||
-            c.desc.toLowerCase().includes(q)
-          ) {
-            results.push({
-              label: `${c.code} – ${c.title}`,
-              url: `/en/2024-25/catalog/courses-credits-hours/${slug}`,
-              type: 'Course',
-            });
-          }
-        });
-      });
-    }
-  }
+    setLoading(true);
+    setError(null);
+    catalogApi
+      .search(q, scope)
+      .then((d) => alive && setResults(d.results || []))
+      .catch((e) => alive && setError(e))
+      .finally(() => alive && setLoading(false));
+    return () => {
+      alive = false;
+    };
+  }, [q, scope]);
+
+  // Rewrite year segment in backend-provided URL to current year
+  const rewriteYear = (url) => {
+    if (!url) return url;
+    return url.replace(/^\/en\/\d{4}-\d{2}\//, `/en/${year}/`);
+  };
 
   return (
     <Layout>
-      <h1 className="font-serif text-[34px] text-[#0a4f8c] font-semibold mb-4">
-        Search Results
-      </h1>
+      <h1 className="font-serif text-[34px] text-[#0a4f8c] font-semibold mb-4">Search Results</h1>
       <p className="text-[14px] text-gray-700 mb-6">
         {q ? (
           <>
@@ -66,10 +52,12 @@ const SearchPage = () => {
           'Enter a search term in the left sidebar.'
         )}
       </p>
+      {loading && <p className="text-gray-500">Searching…</p>}
+      {error && <p className="text-red-600 text-sm">Search failed. Please try again.</p>}
       <ul className="space-y-3">
         {results.map((r, i) => (
           <li key={i} className="border-b border-gray-200 pb-3">
-            <Link to={r.url} className="text-[#0a4f8c] hover:underline font-semibold">
+            <Link to={rewriteYear(r.url)} className="text-[#0a4f8c] hover:underline font-semibold">
               {r.label}
             </Link>
             <div className="text-[12px] uppercase tracking-wide text-gray-500">{r.type}</div>
