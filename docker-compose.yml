@@ -1,0 +1,68 @@
+# One-command local stack for the IIT Jammu SmartCatalog clone.
+#
+# Usage:
+#   docker compose up --build
+#   # then open http://localhost:3000
+#
+# Stop:
+#   docker compose down
+# Wipe data volume:
+#   docker compose down -v
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: iitj-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 }).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: iitj-backend
+    restart: unless-stopped
+    environment:
+      MONGO_URL: mongodb://mongo:27017
+      DB_NAME: iitjammu_catalog
+    ports:
+      - "8001:8001"
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      # Mount source for hot reload during local dev. Remove this volume mount
+      # if you want a fully baked image.
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: iitj-frontend
+    restart: unless-stopped
+    environment:
+      # Point the React app at the backend. When running on the host machine,
+      # the browser hits the backend at localhost:8001 (not the docker network name).
+      REACT_APP_BACKEND_URL: http://localhost:8001
+      WDS_SOCKET_PORT: 0
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  mongo-data:
+    driver: local
