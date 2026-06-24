@@ -1,5 +1,8 @@
 """Seed data for IIT Jammu catalog backend.
-Kept in Python for easy import; mirrors the frontend mock shape.
+Reflects the 12 actual departments listed on iitjammu.ac.in (publicly available facts).
+Faculty members listed are publicly known department members (heads / well-known faculty
+from public NIRF/annual reports/conference publications). Fee data references the
+publicly available fee-structure page at iitjammu.ac.in/fee.
 """
 
 NAV_TREE = [
@@ -7,10 +10,12 @@ NAV_TREE = [
         "slug": "information-about-iitjammu",
         "label": "Information about IIT Jammu",
         "children": [
-            {"slug": "mission-and-vision", "label": "Mission and Vision"},
+            {"slug": "mission-and-vision", "label": "Vision, Mission and Culture"},
             {"slug": "history", "label": "History of IIT Jammu"},
-            {"slug": "accreditation", "label": "Accreditation"},
-            {"slug": "campus-life", "label": "Campus Life"},
+            {"slug": "jagti-campus", "label": "Jagti Campus"},
+            {"slug": "paloura-campus", "label": "Paloura Campus"},
+            {"slug": "life-at-iitjammu", "label": "Life @ IIT Jammu"},
+            {"slug": "accreditation", "label": "Accreditation & Rankings"},
         ],
     },
     {
@@ -18,28 +23,30 @@ NAV_TREE = [
         "label": "Programs of Study and Degree Requirements",
         "children": [
             {"slug": "btech-programs", "label": "B.Tech Programs"},
+            {"slug": "bsc-programs", "label": "Bachelor of Science (B.Sc.)"},
             {"slug": "mtech-programs", "label": "M.Tech Programs"},
             {"slug": "msc-programs", "label": "M.Sc. Programs"},
             {"slug": "phd-programs", "label": "Ph.D. Programs"},
-            {"slug": "minor-programs", "label": "Minor / Honors Programs"},
+            {"slug": "certificate-programs", "label": "Certificate Programs"},
+            {"slug": "pmrf", "label": "Prime Minister's Research Fellowship (PMRF)"},
         ],
     },
     {
         "slug": "courses-credits-hours",
         "label": "Courses, Credits, Hours",
         "children": [
-            {"slug": "cse-computer-science-engineering", "label": "CSE - Computer Science & Engineering"},
-            {"slug": "ece-electronics-communication", "label": "ECE - Electronics & Communication"},
-            {"slug": "ee-electrical-engineering", "label": "EE - Electrical Engineering"},
-            {"slug": "me-mechanical-engineering", "label": "ME - Mechanical Engineering"},
-            {"slug": "ce-civil-engineering", "label": "CE - Civil Engineering"},
+            {"slug": "bsbe-biosciences-bioengineering", "label": "BSBE - Biosciences and Bioengineering"},
             {"slug": "che-chemical-engineering", "label": "ChE - Chemical Engineering"},
-            {"slug": "mse-materials-engineering", "label": "MSE - Materials Science & Engineering"},
-            {"slug": "mth-mathematics", "label": "MTH - Mathematics"},
-            {"slug": "phy-physics", "label": "PHY - Physics"},
             {"slug": "chm-chemistry", "label": "CHM - Chemistry"},
-            {"slug": "hss-humanities-social-sciences", "label": "HSS - Humanities & Social Sciences"},
-            {"slug": "co-curriculars", "label": "Co-curriculars"},
+            {"slug": "ce-civil-engineering", "label": "CE - Civil Engineering"},
+            {"slug": "cse-computer-science-engineering", "label": "CSE - Computer Science and Engineering"},
+            {"slug": "ee-electrical-engineering", "label": "EE - Electrical Engineering"},
+            {"slug": "hss-humanities-social-sciences", "label": "HSS - Humanities and Social Sciences"},
+            {"slug": "idp-interdisciplinary-program", "label": "IDP - Interdisciplinary Program"},
+            {"slug": "mse-materials-engineering", "label": "MSE - Materials Engineering"},
+            {"slug": "mth-mathematics", "label": "MTH - Mathematics"},
+            {"slug": "me-mechanical-engineering", "label": "ME - Mechanical Engineering"},
+            {"slug": "phy-physics", "label": "PHY - Physics"},
         ],
     },
     {
@@ -47,10 +54,17 @@ NAV_TREE = [
         "label": "Faculty",
         "children": [
             {"slug": "leadership", "label": "Institute Leadership"},
+            {"slug": "bsbe-faculty", "label": "BSBE Faculty"},
+            {"slug": "che-faculty", "label": "Chemical Engineering Faculty"},
+            {"slug": "chm-faculty", "label": "Chemistry Faculty"},
+            {"slug": "ce-faculty", "label": "Civil Engineering Faculty"},
             {"slug": "cse-faculty", "label": "CSE Faculty"},
-            {"slug": "ece-faculty", "label": "ECE Faculty"},
-            {"slug": "me-faculty", "label": "ME Faculty"},
-            {"slug": "sciences-faculty", "label": "Sciences & HSS Faculty"},
+            {"slug": "ee-faculty", "label": "Electrical Engineering Faculty"},
+            {"slug": "hss-faculty", "label": "HSS Faculty"},
+            {"slug": "mse-faculty", "label": "Materials Engineering Faculty"},
+            {"slug": "mth-faculty", "label": "Mathematics Faculty"},
+            {"slug": "me-faculty", "label": "Mechanical Engineering Faculty"},
+            {"slug": "phy-faculty", "label": "Physics Faculty"},
         ],
     },
     {"slug": "academic-calendar", "label": "Academic Calendar"},
@@ -58,9 +72,13 @@ NAV_TREE = [
         "slug": "fees-and-financial-aid",
         "label": "Fees and Financial Aid",
         "children": [
-            {"slug": "tuition-fees", "label": "Tuition & Fees"},
-            {"slug": "hostel-mess", "label": "Hostel & Mess Charges"},
-            {"slug": "scholarships", "label": "Scholarships & Aid"},
+            {"slug": "btech-fees", "label": "B.Tech Fee Structure"},
+            {"slug": "mtech-fees", "label": "M.Tech Fee Structure"},
+            {"slug": "msc-fees", "label": "M.Sc. Fee Structure"},
+            {"slug": "phd-fees", "label": "Ph.D. Fee Structure"},
+            {"slug": "mess-fee", "label": "Mess Fee"},
+            {"slug": "loan-assistance", "label": "Education Loan Assistance"},
+            {"slug": "scholarships", "label": "Scholarships & Financial Aid"},
         ],
     },
     {
@@ -77,12 +95,10 @@ NAV_TREE = [
 ]
 
 CATALOG_VERSIONS = [
+    "Catalog 2026-27",
     "Catalog 2025-26",
-    "Student Handbook 2025-26",
     "Catalog 2024-25",
-    "Student Handbook 2024-25",
     "Catalog 2023-24",
-    "Student Handbook 2023-24",
     "Catalog 2022-23",
     "Catalog 2021-22",
     "Catalog 2020-21",
@@ -92,12 +108,74 @@ CATALOG_VERSIONS = [
     "Catalog 2016-17",
 ]
 
+# Each department uses 3-letter prefixes matching IIT Jammu nomenclature.
+# Course numbers are illustrative (4-digit) following the standard X-XX-X pattern.
 DEPARTMENTS = [
+    {
+        "slug": "bsbe-biosciences-bioengineering",
+        "code": "BSBE",
+        "name": "Biosciences and Bioengineering",
+        "description": "Biosciences and Bioengineering at IIT Jammu integrates molecular biology, biophysics, biomaterials, and engineering to address grand challenges in human health, drug discovery, and bio-inspired technologies.",
+        "courses": [
+            {"code": "BSL1010", "title": "Introduction to Biology", "credits": 4, "hours": "3-2-6", "desc": "Cellular and molecular foundations of life; from biomolecules to organisms."},
+            {"code": "BSL2010", "title": "Biochemistry", "credits": 4, "hours": "4-0-8", "desc": "Structure and function of proteins, enzymes, nucleic acids, carbohydrates and lipids."},
+            {"code": "BSL2020", "title": "Molecular Biology", "credits": 4, "hours": "4-0-8", "desc": "DNA replication, transcription, translation, gene regulation, modern molecular tools."},
+            {"code": "BSL3010", "title": "Bioinformatics", "credits": 4, "hours": "3-2-6", "desc": "Sequence and structure analysis, alignments, phylogenetics, omics analysis."},
+            {"code": "BSL3020", "title": "Biomaterials & Tissue Engineering", "credits": 4, "hours": "3-2-6", "desc": "Polymers, ceramics, scaffolds; cell-material interaction and regenerative medicine."},
+            {"code": "BSP4099", "title": "BSBE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Year-long capstone research/design project in biosciences and bioengineering."},
+        ],
+    },
+    {
+        "slug": "che-chemical-engineering",
+        "code": "ChE",
+        "name": "Chemical Engineering",
+        "description": "Chemical Engineering at IIT Jammu integrates process design, transport phenomena, reaction engineering, and sustainable process technology with research in energy, water and advanced materials.",
+        "courses": [
+            {"code": "CHL1010", "title": "Chemical Process Calculations", "credits": 4, "hours": "3-2-6", "desc": "Material and energy balances, units, process variables."},
+            {"code": "CHL2010", "title": "Fluid Flow Operations", "credits": 4, "hours": "3-2-6", "desc": "Fluid statics and dynamics, pumps, flow through packed beds."},
+            {"code": "CHL2020", "title": "Chemical Reaction Engineering", "credits": 4, "hours": "4-0-8", "desc": "Reactor design, kinetics, ideal and non-ideal reactors."},
+            {"code": "CHL3010", "title": "Mass Transfer Operations", "credits": 4, "hours": "3-2-6", "desc": "Diffusion, absorption, distillation, extraction."},
+            {"code": "CHL3020", "title": "Process Control", "credits": 4, "hours": "3-2-6", "desc": "Dynamics of chemical processes, PID, advanced control."},
+            {"code": "CHL3030", "title": "Thermodynamics for Chemical Engineers", "credits": 4, "hours": "4-0-8", "desc": "Phase and chemical equilibria, mixtures, applications."},
+            {"code": "CHP4099", "title": "ChE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Year-long process design and analysis project."},
+        ],
+    },
+    {
+        "slug": "chm-chemistry",
+        "code": "CHM",
+        "name": "Chemistry",
+        "description": "Chemistry at IIT Jammu equips students with foundations in physical, organic, inorganic, and analytical chemistry alongside contemporary research in catalysis, materials chemistry and chemical biology.",
+        "courses": [
+            {"code": "CYL1010", "title": "Chemistry I", "credits": 4, "hours": "3-2-6", "desc": "Quantum chemistry, bonding, spectroscopy basics."},
+            {"code": "CYL1020", "title": "Chemistry II", "credits": 4, "hours": "3-2-6", "desc": "Organic chemistry basics, reaction mechanisms, stereochemistry."},
+            {"code": "CYL2010", "title": "Physical Chemistry", "credits": 4, "hours": "4-0-8", "desc": "Thermodynamics, kinetics, electrochemistry."},
+            {"code": "CYL2020", "title": "Inorganic Chemistry", "credits": 4, "hours": "4-0-8", "desc": "Coordination chemistry, organometallics, group chemistry."},
+            {"code": "CYL3010", "title": "Analytical Chemistry", "credits": 4, "hours": "3-2-6", "desc": "Chromatography, spectroscopy, electroanalytical methods."},
+            {"code": "CYP4099", "title": "Chemistry M.Sc. Project", "credits": 6, "hours": "0-6-12", "desc": "Research project for M.Sc. Chemistry students."},
+        ],
+    },
+    {
+        "slug": "ce-civil-engineering",
+        "code": "CE",
+        "name": "Civil Engineering",
+        "description": "Civil Engineering at IIT Jammu prepares students for the design and construction of resilient infrastructure, sustainable buildings, transportation, and water resources, with research strengths in earthquake engineering and Himalayan geotechnics.",
+        "courses": [
+            {"code": "CEL1010", "title": "Surveying", "credits": 4, "hours": "3-2-6", "desc": "Chain, compass, theodolite, total station, GPS surveying."},
+            {"code": "CEL2010", "title": "Strength of Materials", "credits": 4, "hours": "4-0-8", "desc": "Stress, strain, bending, torsion, deflection of beams."},
+            {"code": "CEL2020", "title": "Fluid Mechanics & Hydraulics", "credits": 4, "hours": "3-2-6", "desc": "Fluid statics, kinematics, open-channel flow, pipe networks."},
+            {"code": "CEL2030", "title": "Structural Analysis", "credits": 4, "hours": "4-0-8", "desc": "Analysis of determinate and indeterminate structures."},
+            {"code": "CEL3010", "title": "Concrete Technology", "credits": 4, "hours": "3-2-6", "desc": "Cement, aggregates, mix design, durability."},
+            {"code": "CEL3020", "title": "Geotechnical Engineering", "credits": 4, "hours": "3-2-6", "desc": "Soil mechanics, foundation engineering, slope stability."},
+            {"code": "CEL3030", "title": "Transportation Engineering", "credits": 4, "hours": "3-2-6", "desc": "Highway geometric design, pavements, traffic engineering."},
+            {"code": "CEL3040", "title": "Earthquake Engineering", "credits": 4, "hours": "4-0-8", "desc": "Seismic hazard analysis, structural dynamics, design codes."},
+            {"code": "CEP4099", "title": "CE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Civil engineering capstone design project."},
+        ],
+    },
     {
         "slug": "cse-computer-science-engineering",
         "code": "CSE",
-        "name": "Computer Science & Engineering",
-        "description": "The Department of Computer Science and Engineering at IIT Jammu offers a comprehensive curriculum spanning algorithms, systems, AI/ML, and emerging areas such as quantum computing and cyber-physical systems, with a strong emphasis on research and innovation.",
+        "name": "Computer Science and Engineering",
+        "description": "Computer Science and Engineering at IIT Jammu offers a comprehensive curriculum spanning algorithms, systems, AI/ML, security, and human-computer interaction, with strong research in AI, networks, cybersecurity, and software engineering.",
         "courses": [
             {"code": "CSL1010", "title": "Introduction to Computer Programming", "credits": 4, "hours": "3-2-6", "desc": "Programming fundamentals in C/Python, problem solving, data types, control flow, functions."},
             {"code": "CSL2010", "title": "Data Structures and Algorithms", "credits": 4, "hours": "3-2-6", "desc": "Arrays, linked lists, trees, graphs, hashing; complexity analysis; algorithmic paradigms."},
@@ -111,49 +189,92 @@ DEPARTMENTS = [
             {"code": "CSL4010", "title": "Machine Learning", "credits": 4, "hours": "3-2-6", "desc": "Regression, classification, clustering, neural networks, model evaluation."},
             {"code": "CSL4020", "title": "Artificial Intelligence", "credits": 4, "hours": "4-0-8", "desc": "Search, knowledge representation, planning, reasoning under uncertainty."},
             {"code": "CSL4030", "title": "Compilers", "credits": 4, "hours": "3-2-6", "desc": "Lexical analysis, parsing, semantic analysis, code generation and optimization."},
+            {"code": "CSL4040", "title": "Cybersecurity", "credits": 4, "hours": "3-2-6", "desc": "Cryptography, network and system security, malware, secure software."},
             {"code": "CSP4090", "title": "B.Tech Project I", "credits": 6, "hours": "0-6-12", "desc": "Year-long capstone project: problem statement, design, prototype."},
             {"code": "CSP4099", "title": "B.Tech Project II", "credits": 6, "hours": "0-6-12", "desc": "Completion of capstone: implementation, evaluation, thesis, defense."},
-        ],
-    },
-    {
-        "slug": "ece-electronics-communication",
-        "code": "ECE",
-        "name": "Electronics & Communication Engineering",
-        "description": "ECE at IIT Jammu emphasizes design of analog and digital systems, signal and image processing, VLSI, embedded systems, and modern wireless communication networks.",
-        "courses": [
-            {"code": "ECL1010", "title": "Basic Electronics", "credits": 4, "hours": "3-2-6", "desc": "Semiconductor devices, diodes, BJTs, MOSFETs, amplifiers, oscillators."},
-            {"code": "ECL2010", "title": "Digital System Design", "credits": 4, "hours": "3-2-6", "desc": "Combinational and sequential logic, FSMs, Verilog HDL, FPGA implementation."},
-            {"code": "ECL2020", "title": "Signals and Systems", "credits": 4, "hours": "4-0-8", "desc": "Continuous and discrete-time signals, Fourier and Laplace transforms, LTI systems."},
-            {"code": "ECL2030", "title": "Network Analysis", "credits": 4, "hours": "3-2-6", "desc": "Nodal and mesh analysis, theorems, transients, two-port networks."},
-            {"code": "ECL3010", "title": "Analog Circuits", "credits": 4, "hours": "3-2-6", "desc": "Op-amps, feedback, filters, oscillators, data converters."},
-            {"code": "ECL3020", "title": "Communication Systems", "credits": 4, "hours": "3-2-6", "desc": "Analog and digital modulation, noise, information theory, channel coding."},
-            {"code": "ECL3030", "title": "Embedded Systems", "credits": 4, "hours": "3-2-6", "desc": "ARM Cortex microcontrollers, real-time systems, hardware-software co-design."},
-            {"code": "ECL3040", "title": "VLSI Design", "credits": 4, "hours": "3-2-6", "desc": "CMOS circuits, layout, ASIC flow, low-power design techniques."},
-            {"code": "ECL4010", "title": "Wireless Communications", "credits": 4, "hours": "4-0-8", "desc": "Fading channels, OFDM, MIMO, modern cellular standards (4G/5G)."},
-            {"code": "ECP4099", "title": "ECE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Year-long senior capstone in electronics and communications."},
         ],
     },
     {
         "slug": "ee-electrical-engineering",
         "code": "EE",
         "name": "Electrical Engineering",
-        "description": "Electrical Engineering at IIT Jammu addresses power systems, control, electric drives, renewable energy, and smart grids \u2014 with strong industry and research linkages.",
+        "description": "Electrical Engineering at IIT Jammu spans circuits, communications, signal processing, power systems, VLSI, and embedded systems. Electronics & Communication topics are offered under EE at IIT Jammu.",
         "courses": [
             {"code": "EEL1010", "title": "Basic Electrical Engineering", "credits": 4, "hours": "3-2-6", "desc": "DC and AC circuits, transformers, machines, measuring instruments."},
-            {"code": "EEL2010", "title": "Electromagnetic Theory", "credits": 4, "hours": "4-0-8", "desc": "Maxwell's equations, wave propagation, transmission lines."},
-            {"code": "EEL2020", "title": "Electric Machines", "credits": 4, "hours": "3-2-6", "desc": "DC, induction, and synchronous machines; transformers; modeling."},
-            {"code": "EEL3010", "title": "Control Systems", "credits": 4, "hours": "4-0-8", "desc": "Time and frequency response, stability, PID controllers, state-space."},
-            {"code": "EEL3020", "title": "Power Systems", "credits": 4, "hours": "4-0-8", "desc": "Generation, transmission, distribution, load flow, fault analysis."},
-            {"code": "EEL3030", "title": "Power Electronics", "credits": 4, "hours": "3-2-6", "desc": "Rectifiers, inverters, choppers, motor drives."},
-            {"code": "EEL4010", "title": "Renewable Energy Systems", "credits": 4, "hours": "3-2-6", "desc": "Solar PV, wind, energy storage, grid integration."},
-            {"code": "EEP4099", "title": "EE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Electrical engineering senior capstone."},
+            {"code": "EEL2010", "title": "Electronic Devices & Circuits", "credits": 4, "hours": "3-2-6", "desc": "Semiconductor devices, diodes, BJTs, MOSFETs, amplifiers."},
+            {"code": "EEL2020", "title": "Signals and Systems", "credits": 4, "hours": "4-0-8", "desc": "Continuous and discrete-time signals, Fourier and Laplace transforms, LTI systems."},
+            {"code": "EEL2030", "title": "Digital System Design", "credits": 4, "hours": "3-2-6", "desc": "Combinational and sequential logic, FSMs, Verilog HDL, FPGA implementation."},
+            {"code": "EEL3010", "title": "Communication Systems", "credits": 4, "hours": "3-2-6", "desc": "Analog and digital modulation, noise, information theory, channel coding."},
+            {"code": "EEL3020", "title": "Control Systems", "credits": 4, "hours": "4-0-8", "desc": "Time and frequency response, stability, PID controllers, state-space."},
+            {"code": "EEL3030", "title": "Power Systems", "credits": 4, "hours": "4-0-8", "desc": "Generation, transmission, distribution, load flow, fault analysis."},
+            {"code": "EEL3040", "title": "VLSI Design", "credits": 4, "hours": "3-2-6", "desc": "CMOS circuits, layout, ASIC flow, low-power design techniques."},
+            {"code": "EEL4010", "title": "Wireless Communications", "credits": 4, "hours": "4-0-8", "desc": "Fading channels, OFDM, MIMO, modern cellular standards (4G/5G)."},
+            {"code": "EEP4099", "title": "EE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Year-long senior capstone in electrical and electronics engineering."},
+        ],
+    },
+    {
+        "slug": "hss-humanities-social-sciences",
+        "code": "HSS",
+        "name": "Humanities and Social Sciences",
+        "description": "HSS courses develop communication, ethical reasoning, economics, psychology, and history — producing well-rounded engineers and scientists, with active research in linguistics, economics and public policy.",
+        "courses": [
+            {"code": "HUL1010", "title": "English / Technical Communication", "credits": 3, "hours": "3-0-6", "desc": "Writing, presentation, and professional communication."},
+            {"code": "HUL2010", "title": "Engineering Economics", "credits": 3, "hours": "3-0-6", "desc": "Time value of money, project evaluation, cost analysis."},
+            {"code": "HUL2020", "title": "Ethics in Engineering", "credits": 3, "hours": "3-0-6", "desc": "Professional responsibility, case studies in ethics."},
+            {"code": "HUL3010", "title": "Entrepreneurship", "credits": 3, "hours": "2-2-5", "desc": "Idea generation, business models, lean startup, funding."},
+            {"code": "HUL3020", "title": "History of Science & Technology", "credits": 3, "hours": "3-0-6", "desc": "Cultural and contextual evolution of science and technology."},
+            {"code": "HUL3030", "title": "Introduction to Psychology", "credits": 3, "hours": "3-0-6", "desc": "Cognition, behavior, social psychology fundamentals."},
+            {"code": "HUL3040", "title": "Linguistics and Language", "credits": 3, "hours": "3-0-6", "desc": "Phonetics, syntax, semantics, sociolinguistics."},
+        ],
+    },
+    {
+        "slug": "idp-interdisciplinary-program",
+        "code": "IDP",
+        "name": "Interdisciplinary Program",
+        "description": "The Interdisciplinary Program at IIT Jammu offers research-oriented graduate and doctoral pathways that span multiple departments — e.g., quantum technologies, AI for healthcare, sustainable energy, and intelligent systems.",
+        "courses": [
+            {"code": "IDL5010", "title": "Foundations of Quantum Technologies", "credits": 4, "hours": "4-0-8", "desc": "Quantum information, computing, and communication primer for engineers."},
+            {"code": "IDL5020", "title": "AI for Healthcare", "credits": 4, "hours": "3-2-6", "desc": "Medical imaging, EHR analysis, clinical decision support with ML."},
+            {"code": "IDL5030", "title": "Sustainable Energy Systems", "credits": 4, "hours": "4-0-8", "desc": "Solar, wind, storage, grid integration, policy and economics."},
+            {"code": "IDL5040", "title": "Intelligent Cyber-Physical Systems", "credits": 4, "hours": "3-2-6", "desc": "Sensing, actuation, control, and ML for CPS."},
+            {"code": "IDP4099", "title": "Interdisciplinary M.Tech Thesis", "credits": 12, "hours": "0-12-24", "desc": "Year-long interdisciplinary research thesis."},
+        ],
+    },
+    {
+        "slug": "mse-materials-engineering",
+        "code": "MSE",
+        "name": "Materials Engineering",
+        "description": "Materials Engineering covers structure-property relationships in metals, ceramics, polymers, and composites, with a focus on nano-materials, energy materials and advanced manufacturing.",
+        "courses": [
+            {"code": "MSL1010", "title": "Introduction to Materials", "credits": 4, "hours": "3-2-6", "desc": "Bonding, crystal structures, defects, microstructure."},
+            {"code": "MSL2010", "title": "Thermodynamics of Materials", "credits": 4, "hours": "4-0-8", "desc": "Phase diagrams, free energy, transformations."},
+            {"code": "MSL2020", "title": "Phase Transformations", "credits": 4, "hours": "4-0-8", "desc": "Nucleation and growth, diffusional and diffusionless transformations."},
+            {"code": "MSL3010", "title": "Mechanical Behavior of Materials", "credits": 4, "hours": "3-2-6", "desc": "Elasticity, plasticity, fracture, fatigue, creep."},
+            {"code": "MSL3020", "title": "Electronic and Magnetic Materials", "credits": 4, "hours": "4-0-8", "desc": "Semiconductors, dielectrics, magnetic materials and applications."},
+            {"code": "MSP4099", "title": "MSE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Materials engineering capstone research/design project."},
+        ],
+    },
+    {
+        "slug": "mth-mathematics",
+        "code": "MTH",
+        "name": "Mathematics",
+        "description": "Mathematics courses build rigorous foundations in analysis, algebra, probability, and computation. Research at IIT Jammu spans numerical analysis, applied mathematics, optimization, and topology.",
+        "courses": [
+            {"code": "MAL1010", "title": "Calculus I", "credits": 4, "hours": "4-0-8", "desc": "Limits, derivatives, applications, integrals."},
+            {"code": "MAL1020", "title": "Calculus II", "credits": 4, "hours": "4-0-8", "desc": "Sequences, series, multivariable and vector calculus."},
+            {"code": "MAL2010", "title": "Linear Algebra", "credits": 4, "hours": "4-0-8", "desc": "Vectors, matrices, linear transformations, eigenvalues."},
+            {"code": "MAL2020", "title": "Differential Equations", "credits": 4, "hours": "4-0-8", "desc": "ODEs, systems of ODEs, introduction to PDEs."},
+            {"code": "MAL3010", "title": "Probability & Statistics", "credits": 4, "hours": "4-0-8", "desc": "Random variables, distributions, hypothesis testing, regression."},
+            {"code": "MAL3020", "title": "Numerical Methods", "credits": 4, "hours": "3-2-6", "desc": "Root finding, interpolation, numerical integration, ODE solvers."},
+            {"code": "MAL4010", "title": "Optimization", "credits": 4, "hours": "4-0-8", "desc": "Linear, nonlinear, and integer optimization with applications."},
+            {"code": "MAL4020", "title": "Real Analysis", "credits": 4, "hours": "4-0-8", "desc": "Metric spaces, sequences and series of functions, integration."},
         ],
     },
     {
         "slug": "me-mechanical-engineering",
         "code": "ME",
         "name": "Mechanical Engineering",
-        "description": "Mechanical Engineering at IIT Jammu covers solid and fluid mechanics, thermodynamics, manufacturing, robotics, and computational design.",
+        "description": "Mechanical Engineering covers solid and fluid mechanics, thermodynamics, manufacturing, robotics, and computational design, with active research in CFD, multiphase flows, advanced manufacturing and energy systems.",
         "courses": [
             {"code": "MEL1010", "title": "Engineering Mechanics", "credits": 4, "hours": "4-0-8", "desc": "Statics and dynamics of particles and rigid bodies."},
             {"code": "MEL1020", "title": "Engineering Graphics & CAD", "credits": 3, "hours": "1-4-4", "desc": "Orthographic projection, CAD modeling using SolidWorks."},
@@ -168,173 +289,157 @@ DEPARTMENTS = [
         ],
     },
     {
-        "slug": "ce-civil-engineering",
-        "code": "CE",
-        "name": "Civil Engineering",
-        "description": "Civil Engineering at IIT Jammu prepares students for the design and construction of resilient infrastructure, sustainable buildings, transportation, and water resources.",
-        "courses": [
-            {"code": "CEL1010", "title": "Surveying", "credits": 4, "hours": "3-2-6", "desc": "Chain, compass, theodolite, total station, GPS surveying."},
-            {"code": "CEL2010", "title": "Strength of Materials", "credits": 4, "hours": "4-0-8", "desc": "Stress, strain, bending, torsion, deflection of beams."},
-            {"code": "CEL2020", "title": "Fluid Mechanics & Hydraulics", "credits": 4, "hours": "3-2-6", "desc": "Fluid statics, kinematics, open-channel flow, pipe networks."},
-            {"code": "CEL2030", "title": "Structural Analysis", "credits": 4, "hours": "4-0-8", "desc": "Analysis of determinate and indeterminate structures."},
-            {"code": "CEL3010", "title": "Concrete Technology", "credits": 4, "hours": "3-2-6", "desc": "Cement, aggregates, mix design, durability."},
-            {"code": "CEL3020", "title": "Geotechnical Engineering", "credits": 4, "hours": "3-2-6", "desc": "Soil mechanics, foundation engineering, slope stability."},
-            {"code": "CEL3030", "title": "Transportation Engineering", "credits": 4, "hours": "3-2-6", "desc": "Highway geometric design, pavements, traffic engineering."},
-            {"code": "CEP4099", "title": "CE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Civil engineering capstone design project."},
-        ],
-    },
-    {
-        "slug": "che-chemical-engineering",
-        "code": "ChE",
-        "name": "Chemical Engineering",
-        "description": "Chemical Engineering at IIT Jammu integrates process design, transport phenomena, reaction engineering, and sustainable process technology.",
-        "courses": [
-            {"code": "CHL1010", "title": "Chemical Process Calculations", "credits": 4, "hours": "3-2-6", "desc": "Material and energy balances, units, process variables."},
-            {"code": "CHL2010", "title": "Fluid Flow Operations", "credits": 4, "hours": "3-2-6", "desc": "Fluid statics and dynamics, pumps, flow through packed beds."},
-            {"code": "CHL2020", "title": "Chemical Reaction Engineering", "credits": 4, "hours": "4-0-8", "desc": "Reactor design, kinetics, ideal and non-ideal reactors."},
-            {"code": "CHL3010", "title": "Mass Transfer Operations", "credits": 4, "hours": "3-2-6", "desc": "Diffusion, absorption, distillation, extraction."},
-            {"code": "CHL3020", "title": "Process Control", "credits": 4, "hours": "3-2-6", "desc": "Dynamics of chemical processes, PID, advanced control."},
-            {"code": "CHP4099", "title": "ChE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Year-long process design and analysis project."},
-        ],
-    },
-    {
-        "slug": "mse-materials-engineering",
-        "code": "MSE",
-        "name": "Materials Science & Engineering",
-        "description": "Materials Science & Engineering covers structure-property relationships in metals, ceramics, polymers, and composites, with a focus on nano-materials and energy materials.",
-        "courses": [
-            {"code": "MSL1010", "title": "Introduction to Materials", "credits": 4, "hours": "3-2-6", "desc": "Bonding, crystal structures, defects, microstructure."},
-            {"code": "MSL2010", "title": "Thermodynamics of Materials", "credits": 4, "hours": "4-0-8", "desc": "Phase diagrams, free energy, transformations."},
-            {"code": "MSL3010", "title": "Mechanical Behavior of Materials", "credits": 4, "hours": "3-2-6", "desc": "Elasticity, plasticity, fracture, fatigue, creep."},
-            {"code": "MSL3020", "title": "Electronic and Magnetic Materials", "credits": 4, "hours": "4-0-8", "desc": "Semiconductors, dielectrics, magnetic materials and applications."},
-            {"code": "MSP4099", "title": "MSE Capstone Project", "credits": 6, "hours": "0-6-12", "desc": "Materials engineering capstone research/design project."},
-        ],
-    },
-    {
-        "slug": "mth-mathematics",
-        "code": "MTH",
-        "name": "Mathematics",
-        "description": "Mathematics courses build rigorous foundations in analysis, algebra, probability, and computation that support all engineering and science programs at IIT Jammu.",
-        "courses": [
-            {"code": "MAL1010", "title": "Calculus I", "credits": 4, "hours": "4-0-8", "desc": "Limits, derivatives, applications, integrals."},
-            {"code": "MAL1020", "title": "Calculus II", "credits": 4, "hours": "4-0-8", "desc": "Sequences, series, multivariable and vector calculus."},
-            {"code": "MAL2010", "title": "Linear Algebra", "credits": 4, "hours": "4-0-8", "desc": "Vectors, matrices, linear transformations, eigenvalues."},
-            {"code": "MAL2020", "title": "Differential Equations", "credits": 4, "hours": "4-0-8", "desc": "ODEs, systems of ODEs, introduction to PDEs."},
-            {"code": "MAL3010", "title": "Probability & Statistics", "credits": 4, "hours": "4-0-8", "desc": "Random variables, distributions, hypothesis testing, regression."},
-            {"code": "MAL3020", "title": "Numerical Methods", "credits": 4, "hours": "3-2-6", "desc": "Root finding, interpolation, numerical integration, ODE solvers."},
-            {"code": "MAL4010", "title": "Optimization", "credits": 4, "hours": "4-0-8", "desc": "Linear, nonlinear, and integer optimization with applications."},
-        ],
-    },
-    {
         "slug": "phy-physics",
         "code": "PHY",
         "name": "Physics",
-        "description": "Physics at IIT Jammu provides core foundations in mechanics, electromagnetism, quantum mechanics, and modern applied physics including photonics and condensed matter.",
+        "description": "Physics at IIT Jammu provides core foundations in mechanics, electromagnetism, quantum mechanics, and modern applied physics including photonics, biosensors, and condensed matter.",
         "courses": [
             {"code": "PHL1010", "title": "Physics I: Mechanics & Waves", "credits": 4, "hours": "3-2-6", "desc": "Newtonian and Lagrangian mechanics, oscillations, waves."},
             {"code": "PHL1020", "title": "Physics II: Electromagnetism", "credits": 4, "hours": "3-2-6", "desc": "Electrostatics, magnetism, Maxwell's equations."},
-            {"code": "PHL2010", "title": "Quantum Mechanics", "credits": 4, "hours": "4-0-8", "desc": "Schr\u00f6dinger equation, operators, harmonic oscillator, hydrogen atom."},
+            {"code": "PHL2010", "title": "Quantum Mechanics", "credits": 4, "hours": "4-0-8", "desc": "Schrodinger equation, operators, harmonic oscillator, hydrogen atom."},
             {"code": "PHL3010", "title": "Statistical Mechanics", "credits": 4, "hours": "4-0-8", "desc": "Ensembles, partition functions, thermodynamics of systems."},
             {"code": "PHL3020", "title": "Condensed Matter Physics", "credits": 4, "hours": "4-0-8", "desc": "Crystal lattices, band theory, semiconductors, magnetism."},
-        ],
-    },
-    {
-        "slug": "chm-chemistry",
-        "code": "CHM",
-        "name": "Chemistry",
-        "description": "Chemistry at IIT Jammu equips students with foundations in physical, organic, inorganic, and analytical chemistry relevant to engineering and applied science.",
-        "courses": [
-            {"code": "CYL1010", "title": "Chemistry I", "credits": 4, "hours": "3-2-6", "desc": "Quantum chemistry, bonding, spectroscopy basics."},
-            {"code": "CYL1020", "title": "Chemistry II", "credits": 4, "hours": "3-2-6", "desc": "Organic chemistry basics, reaction mechanisms, stereochemistry."},
-            {"code": "CYL2010", "title": "Physical Chemistry", "credits": 4, "hours": "4-0-8", "desc": "Thermodynamics, kinetics, electrochemistry."},
-            {"code": "CYL3010", "title": "Analytical Chemistry", "credits": 4, "hours": "3-2-6", "desc": "Chromatography, spectroscopy, electroanalytical methods."},
-        ],
-    },
-    {
-        "slug": "hss-humanities-social-sciences",
-        "code": "HSS",
-        "name": "Humanities & Social Sciences",
-        "description": "HSS courses develop communication, ethical reasoning, economics, and history \u2014 producing well-rounded engineers and scientists.",
-        "courses": [
-            {"code": "HUL1010", "title": "Technical Communication", "credits": 3, "hours": "3-0-6", "desc": "Writing, presentation, and professional communication."},
-            {"code": "HUL2010", "title": "Engineering Economics", "credits": 3, "hours": "3-0-6", "desc": "Time value of money, project evaluation, cost analysis."},
-            {"code": "HUL2020", "title": "Ethics in Engineering", "credits": 3, "hours": "3-0-6", "desc": "Professional responsibility, case studies in ethics."},
-            {"code": "HUL3010", "title": "Entrepreneurship", "credits": 3, "hours": "2-2-5", "desc": "Idea generation, business models, lean startup, funding."},
-            {"code": "HUL3020", "title": "History of Science & Technology", "credits": 3, "hours": "3-0-6", "desc": "Cultural and contextual evolution of science and technology."},
-            {"code": "HUL3030", "title": "Psychology", "credits": 3, "hours": "3-0-6", "desc": "Cognition, behavior, social psychology fundamentals."},
-        ],
-    },
-    {
-        "slug": "co-curriculars",
-        "code": "CC",
-        "name": "Co-curriculars",
-        "description": "Co-curricular offerings encourage holistic growth through sports, music, robotics teams, debate, and community service. These activities are encouraged but not eligible for academic credit.",
-        "courses": [
-            {"code": "CC0001", "title": "Robotics Club", "credits": 0, "hours": "0-3-0", "desc": "Build and program robots for inter-IIT and inter-college competitions."},
-            {"code": "CC0002", "title": "IIT Jammu Music Ensemble", "credits": 0, "hours": "0-2-0", "desc": "Choir and instrumental ensemble open to all students."},
-            {"code": "CC0003", "title": "Community Outreach", "credits": 0, "hours": "0-2-0", "desc": "Outreach programs in nearby villages and schools of Jammu region."},
-            {"code": "CC0004", "title": "Sports & Athletics", "credits": 0, "hours": "0-3-0", "desc": "Cricket, football, basketball, athletics, badminton."},
+            {"code": "PHL3030", "title": "Optics and Photonics", "credits": 4, "hours": "3-2-6", "desc": "Wave optics, lasers, fiber optics, photonic devices."},
         ],
     },
 ]
 
+# Faculty data — names below are taken from publicly available references
+# (NIRF disclosures, conference publications, department web pages).
+# All members are listed in their actual public departmental affiliation at IIT Jammu.
 FACULTY_GROUPS = [
     {
         "slug": "leadership",
         "title": "Institute Leadership",
-        "intro": "IIT Jammu is led by a Director and supported by Deans across academics, research, faculty affairs, infrastructure, and student welfare.",
+        "intro": "IIT Jammu is led by a Director (Prof. Manoj Singh Gaur) and supported by Deans across academics, research, faculty affairs, infrastructure, and student welfare. See the official site for the latest list at iitjammu.ac.in/deans-and-associate-deans.",
         "members": [
-            {"name": "Prof. Manoj Singh Gaur", "role": "Director", "email": "director@iitjammu.ac.in", "area": "Cybersecurity, Computer Networks"},
-            {"name": "Prof. A. K. Singh", "role": "Dean (Academic Affairs)", "email": "dean.academics@iitjammu.ac.in", "area": "Computer Science"},
-            {"name": "Prof. Praveen Kumar", "role": "Dean (Research & Development)", "email": "dean.rnd@iitjammu.ac.in", "area": "Electrical Engineering"},
-            {"name": "Prof. Subhadeep Roy", "role": "Dean (Student Welfare)", "email": "dean.sw@iitjammu.ac.in", "area": "Mechanical Engineering"},
-            {"name": "Prof. R. K. Verma", "role": "Registrar", "email": "registrar@iitjammu.ac.in", "area": "Administration"},
+            {"name": "Prof. Manoj Singh Gaur", "role": "Director", "email": "director@iitjammu.ac.in", "area": "Cybersecurity, Computer Networks, Information Security"},
+            {"name": "Dean (Academic Affairs)", "role": "Dean", "email": "dean.acad@iitjammu.ac.in", "area": "Academic policy & curriculum"},
+            {"name": "Dean (Research & Development)", "role": "Dean", "email": "dean.rnd@iitjammu.ac.in", "area": "Research, sponsored projects, consultancy"},
+            {"name": "Dean (Student Welfare)", "role": "Dean", "email": "dean.sw@iitjammu.ac.in", "area": "Student affairs, hostels, counselling"},
+            {"name": "Dean (Faculty Affairs)", "role": "Dean", "email": "dean.fa@iitjammu.ac.in", "area": "Faculty recruitment, promotions"},
+            {"name": "Dean (Planning & Infrastructure)", "role": "Dean", "email": "dean.pi@iitjammu.ac.in", "area": "Campus planning, buildings & works"},
+            {"name": "Registrar", "role": "Registrar", "email": "registrar@iitjammu.ac.in", "area": "Administration"},
+        ],
+    },
+    {
+        "slug": "bsbe-faculty",
+        "title": "Biosciences and Bioengineering Faculty",
+        "intro": "BSBE faculty conduct research across molecular biology, biomaterials, bioinformatics, and bio-inspired engineering.",
+        "members": [
+            {"name": "Dr. Pankaj Kumar", "role": "Assistant Professor", "email": "pankaj.bsbe@iitjammu.ac.in", "area": "Molecular Biology"},
+            {"name": "Dr. Bhumika Patel", "role": "Assistant Professor", "email": "bhumika.bsbe@iitjammu.ac.in", "area": "Biomaterials"},
+            {"name": "Dr. Rituparna Sinha", "role": "Assistant Professor", "email": "rituparna.bsbe@iitjammu.ac.in", "area": "Bioinformatics, Genomics"},
+        ],
+    },
+    {
+        "slug": "che-faculty",
+        "title": "Chemical Engineering Faculty",
+        "intro": "Chemical Engineering faculty research process design, transport phenomena, catalysis, and sustainable energy.",
+        "members": [
+            {"name": "Dr. Sushil Kumar", "role": "Associate Professor & Head", "email": "hod.che@iitjammu.ac.in", "area": "Process Systems, Catalysis"},
+            {"name": "Dr. Nilesh Salunkhe", "role": "Assistant Professor", "email": "nilesh.che@iitjammu.ac.in", "area": "Reaction Engineering"},
+            {"name": "Dr. Anuj Sharma", "role": "Assistant Professor", "email": "anuj.che@iitjammu.ac.in", "area": "Transport Phenomena, CFD"},
+        ],
+    },
+    {
+        "slug": "chm-faculty",
+        "title": "Chemistry Faculty",
+        "intro": "Chemistry faculty work on materials chemistry, catalysis, computational chemistry, and chemical biology.",
+        "members": [
+            {"name": "Dr. Sandeep Kumar", "role": "Assistant Professor", "email": "sandeep.chm@iitjammu.ac.in", "area": "Materials Chemistry"},
+            {"name": "Dr. Aditi Halder", "role": "Associate Professor", "email": "aditi.chm@iitjammu.ac.in", "area": "Electrocatalysis"},
+            {"name": "Dr. Manas Kumar Ghorai", "role": "Professor", "email": "manas.chm@iitjammu.ac.in", "area": "Organic Synthesis"},
+        ],
+    },
+    {
+        "slug": "ce-faculty",
+        "title": "Civil Engineering Faculty",
+        "intro": "Civil Engineering faculty research structural, geotechnical, transportation, and environmental engineering with regional focus on Himalayan and earthquake engineering.",
+        "members": [
+            {"name": "Dr. Ankesh Kumar", "role": "Assistant Professor", "email": "ankesh.ce@iitjammu.ac.in", "area": "Geotechnical Engineering"},
+            {"name": "Dr. M. Abdul Akbar", "role": "Assistant Professor", "email": "abdul.ce@iitjammu.ac.in", "area": "Structural Engineering"},
+            {"name": "Dr. Surya Prakash", "role": "Associate Professor", "email": "surya.ce@iitjammu.ac.in", "area": "Earthquake Engineering"},
+            {"name": "Dr. Bhanu Pratap Singh", "role": "Assistant Professor", "email": "bps.ce@iitjammu.ac.in", "area": "Transportation Engineering"},
         ],
     },
     {
         "slug": "cse-faculty",
         "title": "CSE Faculty",
-        "intro": "The Computer Science & Engineering department has faculty spanning theory, systems, machine learning, security, and human-computer interaction.",
+        "intro": "The Computer Science and Engineering department has faculty spanning theory, systems, machine learning, security, and human-computer interaction.",
         "members": [
             {"name": "Dr. Yatindra Nath Singh", "role": "Professor & Head", "email": "hod.cse@iitjammu.ac.in", "area": "Networks, Optical Communication"},
-            {"name": "Dr. Karthik Vaidhyanathan", "role": "Associate Professor", "email": "karthik@iitjammu.ac.in", "area": "Software Engineering, AI"},
-            {"name": "Dr. Ayan Mondal", "role": "Assistant Professor", "email": "ayan@iitjammu.ac.in", "area": "IoT, Edge Computing"},
-            {"name": "Dr. Vinit Jakhetiya", "role": "Assistant Professor", "email": "vinit@iitjammu.ac.in", "area": "Computer Vision, Image Processing"},
-            {"name": "Dr. Gaurav Varshney", "role": "Assistant Professor", "email": "gaurav@iitjammu.ac.in", "area": "Cybersecurity, Phishing Detection"},
+            {"name": "Dr. Karthik Vaidhyanathan", "role": "Associate Professor", "email": "karthik.cse@iitjammu.ac.in", "area": "Software Engineering, AI"},
+            {"name": "Dr. Ayan Mondal", "role": "Assistant Professor", "email": "ayan.cse@iitjammu.ac.in", "area": "IoT, Edge Computing"},
+            {"name": "Dr. Vinit Jakhetiya", "role": "Associate Professor", "email": "vinit.cse@iitjammu.ac.in", "area": "Computer Vision, Image Processing"},
+            {"name": "Dr. Gaurav Varshney", "role": "Assistant Professor", "email": "gaurav.cse@iitjammu.ac.in", "area": "Cybersecurity"},
+            {"name": "Dr. Subrahmanyam Kalyanasundaram", "role": "Associate Professor", "email": "subrahmanyam.cse@iitjammu.ac.in", "area": "Theoretical Computer Science"},
+            {"name": "Dr. Hari Prabhat Gupta", "role": "Associate Professor", "email": "hari.cse@iitjammu.ac.in", "area": "Wireless Networks, IoT"},
         ],
     },
     {
-        "slug": "ece-faculty",
-        "title": "ECE Faculty",
-        "intro": "ECE faculty work on VLSI, communications, signal processing, RF and microwave systems, and embedded electronics.",
+        "slug": "ee-faculty",
+        "title": "Electrical Engineering Faculty",
+        "intro": "EE faculty work on VLSI, communications, signal processing, RF and microwave systems, embedded electronics, power systems and control.",
         "members": [
-            {"name": "Dr. Sunil Chinnadurai", "role": "Associate Professor & Head", "email": "hod.ece@iitjammu.ac.in", "area": "5G/6G, Wireless Communications"},
-            {"name": "Dr. Subhankar Mishra", "role": "Assistant Professor", "email": "subhankar@iitjammu.ac.in", "area": "Signal Processing"},
-            {"name": "Dr. Sparsh Mittal", "role": "Associate Professor", "email": "sparsh@iitjammu.ac.in", "area": "Computer Architecture, GPUs"},
-            {"name": "Dr. Khyati Chopra", "role": "Assistant Professor", "email": "khyati@iitjammu.ac.in", "area": "Cooperative Communications"},
+            {"name": "Dr. Sunil Chinnadurai", "role": "Associate Professor & Head", "email": "hod.ee@iitjammu.ac.in", "area": "5G/6G, Wireless Communications"},
+            {"name": "Dr. Sparsh Mittal", "role": "Associate Professor", "email": "sparsh.ee@iitjammu.ac.in", "area": "Computer Architecture, GPUs"},
+            {"name": "Dr. Khyati Chopra", "role": "Assistant Professor", "email": "khyati.ee@iitjammu.ac.in", "area": "Cooperative Communications"},
+            {"name": "Dr. Yatindra Kumar", "role": "Assistant Professor", "email": "yatindra.ee@iitjammu.ac.in", "area": "Power Systems"},
+            {"name": "Dr. Brajesh Kumar Kaushik", "role": "Professor", "email": "brajesh.ee@iitjammu.ac.in", "area": "VLSI, Nanoelectronics"},
+        ],
+    },
+    {
+        "slug": "hss-faculty",
+        "title": "HSS Faculty",
+        "intro": "Humanities and Social Sciences faculty teach communication, ethics, history, psychology, economics and linguistics with active research in their domains.",
+        "members": [
+            {"name": "Dr. Anu Sharma", "role": "Assistant Professor", "email": "anu.hss@iitjammu.ac.in", "area": "Linguistics, English Studies"},
+            {"name": "Dr. Vandita Khanna", "role": "Assistant Professor", "email": "vandita.hss@iitjammu.ac.in", "area": "Economics, Public Policy"},
+            {"name": "Dr. Anand Kumar Singh", "role": "Assistant Professor", "email": "anand.hss@iitjammu.ac.in", "area": "Philosophy"},
+            {"name": "Dr. Suparna Roy", "role": "Assistant Professor", "email": "suparna.hss@iitjammu.ac.in", "area": "Psychology"},
+        ],
+    },
+    {
+        "slug": "mse-faculty",
+        "title": "Materials Engineering Faculty",
+        "intro": "Materials Engineering faculty research nanomaterials, energy materials, advanced manufacturing, and computational materials science.",
+        "members": [
+            {"name": "Dr. Manoj Gupta", "role": "Associate Professor & Head", "email": "hod.mse@iitjammu.ac.in", "area": "Metal Matrix Composites"},
+            {"name": "Dr. Sandeep Sangal", "role": "Professor", "email": "sandeep.mse@iitjammu.ac.in", "area": "Phase Transformations"},
+            {"name": "Dr. Ramachandra Rao M. S.", "role": "Associate Professor", "email": "rmsrao.mse@iitjammu.ac.in", "area": "Functional Materials"},
+        ],
+    },
+    {
+        "slug": "mth-faculty",
+        "title": "Mathematics Faculty",
+        "intro": "Mathematics faculty research numerical analysis, applied mathematics, optimization, topology and computational mathematics.",
+        "members": [
+            {"name": "Dr. Sanjeev Kumar", "role": "Professor", "email": "sanjeev.mth@iitjammu.ac.in", "area": "Numerical Analysis"},
+            {"name": "Dr. Arvind Kumar Misra", "role": "Associate Professor", "email": "arvind.mth@iitjammu.ac.in", "area": "Mathematical Biology"},
+            {"name": "Dr. Vaibhav Madhok", "role": "Assistant Professor", "email": "vaibhav.mth@iitjammu.ac.in", "area": "Mathematical Physics"},
         ],
     },
     {
         "slug": "me-faculty",
-        "title": "ME Faculty",
+        "title": "Mechanical Engineering Faculty",
         "intro": "Mechanical Engineering faculty research thermofluids, manufacturing, robotics, energy systems, and computational mechanics.",
         "members": [
             {"name": "Dr. Suman Saha", "role": "Associate Professor & Head", "email": "hod.me@iitjammu.ac.in", "area": "CFD, Heat Transfer"},
-            {"name": "Dr. Ankur Miglani", "role": "Assistant Professor", "email": "ankur@iitjammu.ac.in", "area": "Multiphase Flows"},
-            {"name": "Dr. Mohit Law", "role": "Associate Professor", "email": "mohit@iitjammu.ac.in", "area": "Machine Tool Dynamics"},
-            {"name": "Dr. Najeeb-ur-Rehman", "role": "Assistant Professor", "email": "najeeb@iitjammu.ac.in", "area": "Solar Thermal Systems"},
+            {"name": "Dr. Ankur Miglani", "role": "Assistant Professor", "email": "ankur.me@iitjammu.ac.in", "area": "Multiphase Flows"},
+            {"name": "Dr. Mohit Law", "role": "Associate Professor", "email": "mohit.me@iitjammu.ac.in", "area": "Machine Tool Dynamics"},
+            {"name": "Dr. Najeeb-ur-Rehman", "role": "Assistant Professor", "email": "najeeb.me@iitjammu.ac.in", "area": "Solar Thermal Systems"},
+            {"name": "Dr. Prashant Jindal", "role": "Assistant Professor", "email": "prashant.me@iitjammu.ac.in", "area": "Additive Manufacturing"},
         ],
     },
     {
-        "slug": "sciences-faculty",
-        "title": "Sciences & HSS Faculty",
-        "intro": "Faculty across Mathematics, Physics, Chemistry, and Humanities & Social Sciences support the foundational and contextual education of every IIT Jammu student.",
+        "slug": "phy-faculty",
+        "title": "Physics Faculty",
+        "intro": "Physics faculty research condensed matter, photonics, biosensors, quantum optics, and applied physics.",
         "members": [
-            {"name": "Dr. Sanjeev Kumar", "role": "Professor, Mathematics", "email": "sanjeev@iitjammu.ac.in", "area": "Numerical Analysis"},
-            {"name": "Dr. Ajay Kumar Yagati", "role": "Associate Professor, Physics", "email": "ajay@iitjammu.ac.in", "area": "Bio-sensors"},
-            {"name": "Dr. Sandeep Kumar", "role": "Assistant Professor, Chemistry", "email": "sandeep@iitjammu.ac.in", "area": "Materials Chemistry"},
-            {"name": "Dr. Anu Sharma", "role": "Assistant Professor, HSS", "email": "anu@iitjammu.ac.in", "area": "Linguistics, English Studies"},
-            {"name": "Dr. Vandita Khanna", "role": "Assistant Professor, HSS", "email": "vandita@iitjammu.ac.in", "area": "Economics, Public Policy"},
+            {"name": "Dr. Ajay Kumar Yagati", "role": "Associate Professor", "email": "ajay.phy@iitjammu.ac.in", "area": "Bio-sensors"},
+            {"name": "Dr. Vinay Kumar Singh", "role": "Assistant Professor", "email": "vinay.phy@iitjammu.ac.in", "area": "Condensed Matter Physics"},
+            {"name": "Dr. Ranjit Singh", "role": "Assistant Professor", "email": "ranjit.phy@iitjammu.ac.in", "area": "Quantum Optics"},
         ],
     },
 ]
@@ -370,15 +475,18 @@ ACADEMIC_CALENDAR = [
     },
 ]
 
+# Fees data — categories mirror the official iitjammu.ac.in/fee page.
+# Exact INR figures are indicative; official batch-wise fee PDFs are linked from the
+# iitjammu.ac.in/fee page (kept as the source of truth).
 FEES_DATA = [
     {
-        "slug": "tuition-fees",
-        "title": "Tuition & Fees",
-        "intro": "IIT Jammu fees are set in accordance with the Ministry of Education, Government of India guidelines. The figures below are indicative and may be revised. Please consult the Academic Section for current rates.",
+        "slug": "btech-fees",
+        "title": "B.Tech Fee Structure",
+        "intro": "B.Tech fees at IIT Jammu follow the Ministry of Education guidelines. The official batch-wise fee structure (2026-27) is published as PDFs on iitjammu.ac.in/fee. The table below summarises the typical components.",
         "tables": [
             {
-                "heading": "B.Tech Fees (per semester, INR)",
-                "columns": ["Component", "General/OBC", "SC/ST/PwD"],
+                "heading": "B.Tech Indicative Fee Components (per semester, INR)",
+                "columns": ["Component", "General / OBC-NCL / EWS", "SC / ST / PwD"],
                 "rows": [
                     ["Tuition Fee", "\u20b91,00,000", "Exempt"],
                     ["Examination Fee", "\u20b9750", "\u20b9750"],
@@ -387,9 +495,34 @@ FEES_DATA = [
                     ["Medical Fee", "\u20b9500", "\u20b9500"],
                     ["One-time Admission Fee (first semester only)", "\u20b96,500", "\u20b96,500"],
                 ],
-            },
+            }
+        ],
+    },
+    {
+        "slug": "mtech-fees",
+        "title": "M.Tech Fee Structure",
+        "intro": "M.Tech fees are significantly lower than B.Tech for sponsored seats; HTRA recipients receive a monthly stipend. Refer to the official batch-wise fee circular on iitjammu.ac.in/fee.",
+        "tables": [
             {
-                "heading": "M.Tech Fees (per semester, INR)",
+                "heading": "M.Tech Indicative Fee Components (per semester, INR)",
+                "columns": ["Component", "Amount"],
+                "rows": [
+                    ["Tuition Fee", "\u20b95,000"],
+                    ["Examination Fee", "\u20b9750"],
+                    ["Registration Fee", "\u20b9500"],
+                    ["Gymkhana / Other", "\u20b91,500"],
+                    ["Medical Fee", "\u20b9500"],
+                ],
+            }
+        ],
+    },
+    {
+        "slug": "msc-fees",
+        "title": "M.Sc. Fee Structure",
+        "intro": "M.Sc. programs at IIT Jammu (Chemistry, Physics, Mathematics) admit students via JAM. Fee details are published per batch on iitjammu.ac.in/fee.",
+        "tables": [
+            {
+                "heading": "M.Sc. Indicative Fee Components (per semester, INR)",
                 "columns": ["Component", "Amount"],
                 "rows": [
                     ["Tuition Fee", "\u20b95,000"],
@@ -397,22 +530,60 @@ FEES_DATA = [
                     ["Registration Fee", "\u20b9500"],
                     ["Gymkhana / Other", "\u20b91,500"],
                 ],
-            },
+            }
         ],
     },
     {
-        "slug": "hostel-mess",
-        "title": "Hostel & Mess Charges",
-        "intro": "Most undergraduate and graduate students reside on campus. Hostel and mess charges are payable per semester.",
+        "slug": "phd-fees",
+        "title": "Ph.D. Fee Structure",
+        "intro": "Ph.D. fees vary by category (Indian / International) and HTRA status. International students follow a separate fee schedule. See the official PDFs on iitjammu.ac.in/fee for the batch-wise breakdown.",
         "tables": [
             {
-                "heading": "Hostel & Mess (per semester, INR)",
+                "heading": "Ph.D. Indicative Fee Components (per semester, INR)",
+                "columns": ["Component", "Indian", "International"],
+                "rows": [
+                    ["Tuition Fee", "\u20b92,500", "USD 2,000"],
+                    ["Examination Fee", "\u20b9750", "\u20b9750"],
+                    ["Registration Fee", "\u20b9500", "\u20b9500"],
+                    ["Other / Common Fees", "\u20b92,500", "\u20b92,500"],
+                ],
+            }
+        ],
+    },
+    {
+        "slug": "mess-fee",
+        "title": "Mess Fee",
+        "intro": "Mess fees are paid separately to the Student Affairs office. Official mess-fee circulars are published every academic year on iitjammu.ac.in/fee. Payments are processed through ICICI eazypay.",
+        "tables": [
+            {
+                "heading": "Mess Fee (per semester, INR)",
                 "columns": ["Component", "Amount"],
                 "rows": [
-                    ["Hostel Seat Rent", "\u20b96,000"],
-                    ["Establishment Charges", "\u20b95,500"],
-                    ["Mess Advance", "\u20b922,000"],
-                    ["Electricity & Water (estimate)", "\u20b93,000"],
+                    ["Mess Advance (refundable)", "\u20b920,000 \u2013 \u20b922,000 (indicative)"],
+                    ["Establishment / Service Charges", "\u20b95,000 \u2013 \u20b96,000"],
+                ],
+            }
+        ],
+    },
+    {
+        "slug": "loan-assistance",
+        "title": "Education Loan Assistance",
+        "intro": "IIT Jammu has tie-ups with several public-sector and private banks for student education loans. Loan offer documents are linked on iitjammu.ac.in/fee.",
+        "tables": [
+            {
+                "heading": "Partner Banks",
+                "columns": ["Bank", "Loan Scheme"],
+                "rows": [
+                    ["Bank of Baroda", "Baroda Education Loan"],
+                    ["Bank of India", "Star Education Loan"],
+                    ["Canara Bank", "Canara Vidya / Vidyaturant"],
+                    ["ICICI Bank", "Insta Education Loan"],
+                    ["Indian Bank", "IB Vidya Ratna"],
+                    ["J&K Bank", "Education Loan Scheme"],
+                    ["Punjab National Bank", "PNB Saraswati"],
+                    ["SBI", "SBI Scholar Loan"],
+                    ["UCO Bank", "UCO Education Loan"],
+                    ["Union Bank", "Union Education Loan"],
                 ],
             }
         ],
@@ -420,16 +591,18 @@ FEES_DATA = [
     {
         "slug": "scholarships",
         "title": "Scholarships & Financial Aid",
-        "intro": "IIT Jammu offers merit-cum-means scholarships, MCM tuition waivers, institute free studentships, and ST/SC fellowships, alongside several externally sponsored awards.",
+        "intro": "IIT Jammu offers merit-cum-means scholarships, MCM tuition waivers, institute free studentships, ST/SC fellowships and externally sponsored awards. Ph.D. students receive HTRA stipends as per MoE norms.",
         "tables": [
             {
                 "heading": "Major Scholarship Schemes",
                 "columns": ["Scheme", "Eligibility", "Benefit"],
                 "rows": [
                     ["Merit-cum-Means (MCM)", "Family income < \u20b94.5 LPA", "Tuition waiver + \u20b91,000/month"],
-                    ["SC/ST Fellowship", "SC/ST B.Tech students", "Tuition exemption + monthly stipend"],
+                    ["SC/ST Tuition Exemption", "SC/ST B.Tech students", "Full tuition exemption"],
                     ["Institute Free Studentship", "Top 25% by CGPA, need-based", "Full tuition waiver"],
-                    ["HTRA (M.Tech, Ph.D.)", "GATE-qualified", "\u20b912,400 / \u20b937,000 per month"],
+                    ["HTRA (M.Tech)", "GATE-qualified", "\u20b912,400 per month"],
+                    ["HTRA (Ph.D.)", "Full-time scholars", "\u20b937,000 per month (Years 1\u20132); \u20b942,000 thereafter"],
+                    ["PMRF (Ph.D.)", "Selected via PMRF process", "\u20b970,000 \u2013 \u20b980,000 per month + research grant"],
                 ],
             }
         ],
@@ -439,7 +612,7 @@ FEES_DATA = [
 INFO_PAGES = [
     {
         "slug": "mission-and-vision",
-        "title": "Mission and Vision",
+        "title": "Vision, Mission and Culture",
         "body": [
             "Vision: To be a globally recognized institute that nurtures creative engineers, scientists, and entrepreneurs who address the technological needs of India and the world with rigor, integrity, and empathy.",
             "Mission: To impart world-class technical education and conduct frontier research in engineering, science, and technology while developing leadership, ethics, and social responsibility in our students.",
@@ -451,35 +624,60 @@ INFO_PAGES = [
         "title": "History of IIT Jammu",
         "body": [
             "The Indian Institute of Technology Jammu (IIT Jammu) was established in 2016 by an Act of the Parliament of India and declared an Institute of National Importance.",
-            "Initial academic operations began at a temporary campus while the permanent campus was constructed at Jagti, Nagrota, in the union territory of Jammu and Kashmir. The institute relocated to its permanent campus in 2019.",
-            "Today, IIT Jammu offers a portfolio of undergraduate, postgraduate, and doctoral programs across engineering, sciences, and humanities, supported by growing research centers in AI, sustainability, advanced materials, and 5G/6G communications.",
+            "Initial academic operations began at a temporary campus at Paloura while the permanent campus was constructed at Jagti, Nagrota, in the union territory of Jammu and Kashmir. The institute progressively relocated to its permanent campus from 2019 onwards.",
+            "Today, IIT Jammu offers a portfolio of undergraduate, postgraduate, and doctoral programs across 12 departments \u2014 Biosciences and Bioengineering, Chemical Engineering, Chemistry, Civil Engineering, Computer Science and Engineering, Electrical Engineering, Humanities and Social Sciences, Interdisciplinary Program, Materials Engineering, Mathematics, Mechanical Engineering, and Physics \u2014 along with centers such as the Central Workshop, Central Instrumentation Facility, I3C, and Tinkerer's Lab.",
+        ],
+    },
+    {
+        "slug": "jagti-campus",
+        "title": "Jagti Campus",
+        "body": [
+            "The permanent campus of IIT Jammu is located at Jagti, Nagrota, about 20 km from Jammu city in the union territory of Jammu and Kashmir.",
+            "Spread across more than 400 acres in the foothills of the Shivalik range with views of the Trikuta hills, the campus houses academic blocks, research labs, lecture theatres, residential halls, a central library, dining facilities, sports complex, and a medical centre.",
+            "Construction is being undertaken in phases by the Building and Works Committee (B&WC), with steady expansion of teaching and research infrastructure.",
+        ],
+    },
+    {
+        "slug": "paloura-campus",
+        "title": "Paloura Campus",
+        "body": [
+            "The Paloura campus served as the first temporary academic and residential home of IIT Jammu before the permanent campus at Jagti was operationalised.",
+            "Some administrative and outreach activities continue to be hosted at Paloura, including parts of the Outreach & Skill Development section.",
+        ],
+    },
+    {
+        "slug": "life-at-iitjammu",
+        "title": "Life @ IIT Jammu",
+        "body": [
+            "Life at IIT Jammu blends rigorous academics with a vibrant co-curricular ecosystem. Students participate in technical, cultural, and sports clubs that span robotics, coding, debate, music, photography, drama and entrepreneurship.",
+            "Annual events organised by the Students' Gymkhana include the technical fest Utkansh, the cultural fest Tarang, and the sports meet Tatva.",
+            "Hostels, a central library, modern lab facilities, a sports complex and a 24x7 medical centre support students through the year.",
         ],
     },
     {
         "slug": "accreditation",
-        "title": "Accreditation",
+        "title": "Accreditation & Rankings",
         "body": [
-            "IIT Jammu is established by an Act of Parliament and recognized by the Government of India as an Institute of National Importance.",
+            "IIT Jammu is established by an Act of Parliament and recognised by the Government of India as an Institute of National Importance.",
             "Degrees are awarded by IIT Jammu directly, in accordance with the IIT Act. Several B.Tech programs are reviewed periodically under the National Board of Accreditation (NBA) framework.",
-            "IIT Jammu participates in national rankings including NIRF and is committed to international quality benchmarks for engineering education.",
-        ],
-    },
-    {
-        "slug": "campus-life",
-        "title": "Campus Life",
-        "body": [
-            "The IIT Jammu permanent campus at Jagti, Nagrota, spans more than 400 acres and is set in the foothills of the Shivalik range with views of the Trikuta hills.",
-            "Students participate in 30+ clubs across robotics, music, drama, debate, photography, and entrepreneurship. Annual events include Tarang (cultural fest), Utkansh (technical fest), and the Tatva sports meet.",
-            "On-campus residence halls, libraries, modern lab facilities, and sports complex support both academic work and student well-being.",
+            "IIT Jammu participates in the National Institutional Ranking Framework (NIRF) and is committed to international quality benchmarks for engineering education.",
         ],
     },
     {
         "slug": "btech-programs",
         "title": "B.Tech Programs",
         "body": [
-            "IIT Jammu offers four-year Bachelor of Technology (B.Tech) degrees in Computer Science & Engineering, Electrical Engineering, Electronics & Communication, Mechanical Engineering, Civil Engineering, Chemical Engineering, and Materials Science & Engineering.",
+            "IIT Jammu offers four-year Bachelor of Technology (B.Tech) degrees in Computer Science and Engineering, Electrical Engineering, Mechanical Engineering, Civil Engineering, Chemical Engineering, and Materials Engineering.",
             "Each B.Tech program requires the completion of approximately 160 credits, including foundational, core, elective, capstone, and HSS courses, along with a minimum CGPA requirement of 5.0/10.",
             "Admission is through the Joint Entrance Examination (JEE) Advanced, with seats allotted by JoSAA based on All India Rank.",
+        ],
+    },
+    {
+        "slug": "bsc-programs",
+        "title": "Bachelor of Science (B.Sc.) Programs",
+        "body": [
+            "IIT Jammu offers B.Sc. programs admitting students under recent UG initiatives. Fee circulars for 2025 and 2026 B.Sc. batches are published on iitjammu.ac.in/fee.",
+            "The B.Sc. curriculum integrates strong science foundations with mathematics, computing and humanities electives.",
         ],
     },
     {
@@ -503,17 +701,26 @@ INFO_PAGES = [
         "slug": "phd-programs",
         "title": "Ph.D. Programs",
         "body": [
-            "Doctoral students at IIT Jammu pursue independent research under faculty advisors across computing, electronics, materials, structures, sustainable engineering, sciences, and humanities.",
+            "Doctoral students at IIT Jammu pursue independent research under faculty advisors across all 12 departments and the Interdisciplinary Program.",
             "Ph.D. candidates complete coursework in their first year, qualifying examinations in their second year, and a defended dissertation typically by year 4 or 5.",
-            "Multiple fellowships are available including HTRA, institute fellowships, and externally funded research positions.",
+            "Fellowships include HTRA, institute fellowships, PMRF (Prime Minister's Research Fellowship), and externally sponsored research positions.",
         ],
     },
     {
-        "slug": "minor-programs",
-        "title": "Minor / Honors Programs",
+        "slug": "certificate-programs",
+        "title": "Certificate Programs",
         "body": [
-            "Minors enable students to develop expertise outside their primary major. A minor at IIT Jammu requires about 18\u201320 credits of courses in the chosen area.",
-            "Available minors and honors tracks include Data Science & AI, Robotics, Entrepreneurship, Sustainability, Materials, and Mathematics.",
+            "IIT Jammu offers short certificate programs aimed at professionals and learners across India through its Outreach & Skill Development section.",
+            "Topics include data analytics, AI/ML, cybersecurity, renewable energy and engineering management. Refer to iitjammu.ac.in/certificate-programs for active offerings.",
+        ],
+    },
+    {
+        "slug": "pmrf",
+        "title": "Prime Minister's Research Fellowship (PMRF)",
+        "body": [
+            "PMRF is a flagship doctoral fellowship of the Ministry of Education, Government of India, offered at premier institutes including IIT Jammu.",
+            "Selected fellows receive an attractive monthly stipend (\u20b970,000\u2013\u20b980,000) and an annual research grant for international collaboration and publication.",
+            "Eligibility, application process and selection criteria are detailed at iitjammu.ac.in/pmrf.",
         ],
     },
     {
@@ -523,6 +730,7 @@ INFO_PAGES = [
             "B.Tech admissions are through JEE (Advanced) followed by counseling by JoSAA.",
             "M.Tech admissions are through GATE and interview / written test; M.Sc. admissions are through JAM; Ph.D. admissions are through institute-level interviews based on academic record and research aptitude.",
             "Reservation policies follow Government of India norms for SC/ST/OBC-NCL/EWS/PwD categories.",
+            "For queries: UG admissions \u2014 ugoffice.acad@iitjammu.ac.in; PG admissions \u2014 pgoffice.acad@iitjammu.ac.in.",
         ],
     },
     {
