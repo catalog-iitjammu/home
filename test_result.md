@@ -250,6 +250,21 @@ backend:
           comment: "✅ VERIFIED: POST /api/seed is idempotent (returns same counts on multiple calls). POST /api/seed?force=true wipes and reseeds with non-zero counts for all collections."
 
 frontend:
+  - task: "Remove Emergent badge from index.html"
+    implemented: true
+    working: true
+    file: "frontend/public/index.html"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "User reported the 'Made with Emergent' fixed bottom-right pill was still visible in the preview after our removal attempt. Restarted the frontend dev server to re-serve the static public/index.html. The updated index.html no longer contains the #emergent-badge anchor, the emergent-main.js script tag, or the PostHog analytics block. Page title set to 'IIT Jammu | Academic Catalog' and theme-color to #0a4f8c."
+        - working: true
+          agent: "testing"
+          comment: "✅ VERIFIED: All 6 checks PASSED with hard reload (Ctrl+F5). (1) No <a id='emergent-badge'> element in DOM. (2) No 'Made with Emergent' text anywhere on page. (3) Page title correctly shows 'IIT Jammu | Academic Catalog'. (4) No emergent-main.js script tag found (only bundle.js and Cloudflare beacon loaded). (5) No window.__EMERGENT__ or Emergent-related globals. (6) No fixed bottom-right badge element visible. Screenshot confirms clean page with IIT Jammu branding and no badge. Badge removal is complete and successful."
+
   - task: "Header — IIT Jammu logo + full name (bold)"
     implemented: true
     working: "NA"
@@ -367,3 +382,24 @@ agent_communication:
         
         All backend tasks marked as working: true, needs_retesting: false.
         No critical issues found. Backend is production-ready.
+    - agent: "testing"
+      message: |
+        ✅ EMERGENT BADGE REMOVAL VERIFIED - COMPLETE SUCCESS
+        
+        Tested the live page at https://course-hours.preview.emergentagent.com/en/2024-25/catalog
+        with hard reload (Ctrl+F5 / no-cache) to bypass browser cache.
+        
+        ALL 6 VERIFICATION CHECKS PASSED:
+        1. ✅ No <a id="emergent-badge"> element in DOM
+        2. ✅ No "Made with Emergent" text anywhere on the page
+        3. ✅ Page title is "IIT Jammu | Academic Catalog" (not "Emergent | Fullstack App")
+        4. ✅ No emergent-main.js or assets.emergent.sh script tags
+           - Only 2 scripts loaded: bundle.js and Cloudflare beacon
+        5. ✅ No window.__EMERGENT__ or Emergent-related window globals
+        6. ✅ No fixed bottom-right badge element visible
+        
+        Screenshot confirms clean page with IIT Jammu branding and no badge visible.
+        The badge has been successfully removed from the application.
+        
+        Task "Remove Emergent badge from index.html" marked as working: true, 
+        needs_retesting: false, stuck_count: 0.
