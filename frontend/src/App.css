@@ -1,0 +1,82 @@
+/* GCET SmartCatalog clone styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:wght@400;500;600;700&display=swap');
+
+.App {
+  font-family: 'Lora', 'Georgia', serif;
+}
+
+/* Make sure links don't show default ugly underline everywhere */
+a {
+  text-decoration: none;
+}
+
+/* Catalog content tables */
+.catalog-table {
+  border-collapse: collapse;
+  margin: 12px 0 20px;
+  font-size: 14px;
+  background: #ffffff;
+}
+.catalog-table th,
+.catalog-table td {
+  border: 1px solid #cfd8df;
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+.catalog-table thead th {
+  background: #f0f4f8;
+  color: #0a4f8c;
+  font-weight: 600;
+}
+.catalog-table tbody tr:nth-child(even) {
+  background: #fafbfc;
+}
+.catalog-table tbody tr:hover {
+  background: #eef4fa;
+}
+
+/* Form input focus */
+.prose-catalog input:focus,
+.prose-catalog select:focus {
+  outline: 2px solid #0a4f8c;
+  outline-offset: 1px;
+}
+
+/* Smooth link hover */
+a {
+  transition: color 150ms ease;
+}
+
+/* Sidebar selection inputs */
+aside select,
+aside input[type='text'] {
+  font-family: 'Lora', 'Georgia', serif;
+}
+
+/* Print styles */
+@media print {
+  aside,
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* Prose helpers */
+.prose-catalog h1,
+.prose-catalog h2,
+.prose-catalog h3 {
+  font-family: 'Source Serif 4', 'Lora', Georgia, serif;
+}
+
+.prose-catalog p {
+  margin-bottom: 8px;
+}
+
+/* Make sidebar tree compact yet readable */
+aside ul li {
+  line-height: 1.35;
+}
