@@ -1,9 +1,15 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Query
+from fastapi import FastAPI, APIRouter, HTTPException, Query, Header, Depends, Request
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import Response, JSONResponse
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
+import secrets
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Any
@@ -26,7 +32,32 @@ mongo_url = os.environ["MONGO_URL"]
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ["DB_NAME"]]
 
+# --- Admin key (for state-changing endpoints) ---
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "").strip()
+if not ADMIN_API_KEY:
+    # Generate a strong default for first-run dev; print it once so the operator can grab it.
+    # In production the operator MUST set ADMIN_API_KEY explicitly via env.
+    ADMIN_API_KEY = secrets.token_urlsafe(32)
+    logging.getLogger(__name__).warning(
+        "ADMIN_API_KEY env var not set; generated ephemeral key: %s "
+        "(set ADMIN_API_KEY in backend/.env to make it stable across restarts)",
+        ADMIN_API_KEY,
+    )
+
+
+def require_admin(x_admin_key: Optional[str] = Header(None)):
+    """FastAPI dependency: 401 if the X-Admin-Key header is missing/wrong."""
+    if not x_admin_key or not secrets.compare_digest(x_admin_key, ADMIN_API_KEY):
+        raise HTTPException(status_code=401, detail="Admin authentication required")
+    return True
+
+
+# --- Rate limiter ---
+limiter = Limiter(key_func=get_remote_address, default_limits=["120/minute"])
+
 app = FastAPI(title="IIT Jammu SmartCatalog API")
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 api = APIRouter(prefix="/api")
 
 logger = logging.getLogger(__name__)
@@ -36,13 +67,32 @@ logging.basicConfig(
 )
 
 
+# --- Security headers middleware ---
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response: Response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = (
+            "accelerometer=(), camera=(), geolocation=(), gyroscope=(), microphone=(), payment=()"
+        )
+        # Modest CSP suitable for an API; the SPA serves its own CSP.
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'none'; frame-ancestors 'none'"
+        )
+        # HSTS only when served over HTTPS at the proxy level.
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
+
 # ---------- Models ----------
 class Course(BaseModel):
-    code: str
-    title: str
-    credits: int
-    hours: str
-    desc: str
+    code: str = Field(..., min_length=1, max_length=20)
+    title: str = Field(..., min_length=1, max_length=200)
+    credits: int = Field(..., ge=0, le=20)
+    hours: str = Field(..., min_length=1, max_length=20)
+    desc: str = Field(..., min_length=1, max_length=1000)
 
 
 class Department(BaseModel):
@@ -67,45 +117,12 @@ class FacultyGroup(BaseModel):
     members: List[FacultyMember]
 
 
-class CalendarRow(BaseModel):
-    event: str
-    date: str
-
-
-class CalendarTerm(BaseModel):
-    term: str
-    rows: List[CalendarRow]
-
-
-class FeeTable(BaseModel):
-    heading: str
-    columns: List[str]
-    rows: List[List[str]]
-
-
-class FeeSection(BaseModel):
-    slug: str
-    title: str
-    intro: str
-    tables: List[FeeTable]
-
-
-class InfoPage(BaseModel):
-    slug: str
-    title: str
-    body: List[str]
-
-
-class NavItem(BaseModel):
-    slug: str
-    label: str
-    children: Optional[List[Any]] = None
-
-
-class SearchResult(BaseModel):
-    label: str
-    url: str
-    type: str
+class CourseCreate(BaseModel):
+    code: str = Field(..., min_length=1, max_length=20)
+    title: str = Field(..., min_length=1, max_length=200)
+    credits: int = Field(..., ge=0, le=20)
+    hours: str = Field(..., min_length=1, max_length=20)
+    desc: str = Field(..., min_length=1, max_length=1000)
 
 
 # ---------- Helpers ----------
@@ -114,10 +131,11 @@ def _strip_mongo_id(doc: dict) -> dict:
     return doc
 
 
-# ---------- Seed ----------
-@api.post("/seed")
-async def seed_database(force: bool = False):
-    """Seed the DB with initial IIT Jammu catalog content. Safe to call multiple times.
+# ---------- Seed (ADMIN ONLY) ----------
+@api.post("/seed", dependencies=[Depends(require_admin)])
+@limiter.limit("5/minute")
+async def seed_database(request: Request, force: bool = False):
+    """Seed the DB with initial IIT Jammu catalog content. Admin-only.
 
     Uses upsert semantics on `slug` keys; pass ?force=true to wipe and reseed.
     """
@@ -130,30 +148,24 @@ async def seed_database(force: bool = False):
         await db.nav.delete_many({})
         await db.meta.delete_many({})
 
-    # Departments
     for dept in DEPARTMENTS:
         await db.departments.update_one(
             {"slug": dept["slug"]}, {"$set": dept}, upsert=True
         )
-    # Faculty groups
     for fg in FACULTY_GROUPS:
         await db.faculty_groups.update_one(
             {"slug": fg["slug"]}, {"$set": fg}, upsert=True
         )
-    # Calendar terms
     for term in ACADEMIC_CALENDAR:
         await db.calendar.update_one(
             {"term": term["term"]}, {"$set": term}, upsert=True
         )
-    # Fees
     for fee in FEES_DATA:
         await db.fees.update_one({"slug": fee["slug"]}, {"$set": fee}, upsert=True)
-    # Info pages
     for info in INFO_PAGES:
         await db.info_pages.update_one(
             {"slug": info["slug"]}, {"$set": info}, upsert=True
         )
-    # Nav
     await db.nav.update_one(
         {"_id": "nav-tree"}, {"$set": {"tree": NAV_TREE}}, upsert=True
     )
@@ -174,11 +186,28 @@ async def seed_database(force: bool = False):
 
 
 async def _ensure_seeded():
-    if await db.departments.count_documents({}) == 0:
-        await seed_database(False)
+    """Internal silent seed (no auth) used on startup / lazy-init only."""
+    if await db.departments.count_documents({}) > 0:
+        return
+    for dept in DEPARTMENTS:
+        await db.departments.update_one({"slug": dept["slug"]}, {"$set": dept}, upsert=True)
+    for fg in FACULTY_GROUPS:
+        await db.faculty_groups.update_one({"slug": fg["slug"]}, {"$set": fg}, upsert=True)
+    for term in ACADEMIC_CALENDAR:
+        await db.calendar.update_one({"term": term["term"]}, {"$set": term}, upsert=True)
+    for fee in FEES_DATA:
+        await db.fees.update_one({"slug": fee["slug"]}, {"$set": fee}, upsert=True)
+    for info in INFO_PAGES:
+        await db.info_pages.update_one({"slug": info["slug"]}, {"$set": info}, upsert=True)
+    await db.nav.update_one({"_id": "nav-tree"}, {"$set": {"tree": NAV_TREE}}, upsert=True)
+    await db.meta.update_one(
+        {"_id": "catalog-meta"},
+        {"$set": {"versions": CATALOG_VERSIONS, "current": "Catalog 2024-25"}},
+        upsert=True,
+    )
 
 
-# ---------- Routes ----------
+# ---------- Public read endpoints ----------
 @api.get("/")
 async def root():
     return {"message": "IIT Jammu SmartCatalog API", "version": "1.0"}
@@ -221,21 +250,17 @@ async def get_department(slug: str):
     return _strip_mongo_id(doc)
 
 
-class CourseCreate(BaseModel):
-    code: str
-    title: str
-    credits: int
-    hours: str
-    desc: str
-
-
-@api.post("/departments/{slug}/courses")
-async def add_course(slug: str, course: CourseCreate):
+# ---------- Admin mutating endpoints ----------
+@api.post(
+    "/departments/{slug}/courses",
+    dependencies=[Depends(require_admin)],
+)
+@limiter.limit("30/minute")
+async def add_course(request: Request, slug: str, course: CourseCreate):
     await _ensure_seeded()
     dept = await db.departments.find_one({"slug": slug})
     if not dept:
         raise HTTPException(404, f"Department '{slug}' not found")
-    # Reject duplicate code
     if any(c.get("code") == course.code for c in dept.get("courses", [])):
         raise HTTPException(409, f"Course '{course.code}' already exists in {slug}")
     await db.departments.update_one(
@@ -244,8 +269,12 @@ async def add_course(slug: str, course: CourseCreate):
     return {"status": "ok", "added": course.code}
 
 
-@api.delete("/departments/{slug}/courses/{code}")
-async def remove_course(slug: str, code: str):
+@api.delete(
+    "/departments/{slug}/courses/{code}",
+    dependencies=[Depends(require_admin)],
+)
+@limiter.limit("30/minute")
+async def remove_course(request: Request, slug: str, code: str):
     res = await db.departments.update_one(
         {"slug": slug}, {"$pull": {"courses": {"code": code}}}
     )
@@ -254,6 +283,7 @@ async def remove_course(slug: str, code: str):
     return {"status": "ok", "removed": code}
 
 
+# ---------- More public read endpoints ----------
 @api.get("/faculty")
 async def list_faculty():
     await _ensure_seeded()
@@ -309,20 +339,25 @@ async def get_info_page(slug: str):
     return _strip_mongo_id(doc)
 
 
-# ---------- Search ----------
+# ---------- Search (rate-limited) ----------
 @api.get("/search")
+@limiter.limit("60/minute")
 async def search(
-    q: str = Query("", description="Search query"),
+    request: Request,
+    q: str = Query("", description="Search query", max_length=100),
     scope: str = Query("Entire Catalog", description="Entire Catalog | Programs | Courses"),
 ):
     await _ensure_seeded()
-    if not q.strip():
+    if scope not in ("Entire Catalog", "Programs", "Courses"):
+        raise HTTPException(400, "Invalid scope")
+
+    q_stripped = q.strip()
+    if not q_stripped:
         return {"query": q, "scope": scope, "results": []}
 
-    needle = q.lower()
+    needle = q_stripped.lower()
     results: List[dict] = []
 
-    # Programs / sections from nav tree
     if scope in ("Entire Catalog", "Programs"):
         nav_doc = await db.nav.find_one({"_id": "nav-tree"})
         tree = nav_doc.get("tree", []) if nav_doc else []
@@ -345,7 +380,6 @@ async def search(
                         }
                     )
 
-    # Courses
     if scope in ("Entire Catalog", "Courses"):
         depts = await db.departments.find().to_list(100)
         for d in depts:
@@ -363,21 +397,22 @@ async def search(
                         }
                     )
 
-    return {"query": q, "scope": scope, "count": len(results), "results": results}
+    return {"query": q_stripped, "scope": scope, "count": len(results), "results": results}
 
 
 # ---------- Status (kept for backward compatibility) ----------
 class StatusCheck(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
+    client_name: str = Field(..., min_length=1, max_length=200)
 
 
 class StatusCheckCreate(BaseModel):
-    client_name: str
+    client_name: str = Field(..., min_length=1, max_length=200)
 
 
 @api.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
+@limiter.limit("30/minute")
+async def create_status_check(request: Request, input: StatusCheckCreate):
     obj = StatusCheck(client_name=input.client_name)
     await db.status_checks.insert_one(obj.dict())
     return obj
@@ -389,13 +424,26 @@ async def get_status_checks():
     return [StatusCheck(**i) for i in items]
 
 
+# ---------- App wiring ----------
 app.include_router(api)
+
+# Security headers FIRST so it wraps everything.
+app.add_middleware(SecurityHeadersMiddleware)
+
+# CORS: explicit allowlist via env; default to wildcard READ-ONLY (no credentials).
+cors_origins_env = os.environ.get("CORS_ORIGINS", "*").strip()
+if cors_origins_env == "*":
+    allow_origins = ["*"]
+else:
+    allow_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=allow_origins,
+    allow_credentials=False,  # no cookies/sessions; safer with wildcards
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "X-Admin-Key"],
+    max_age=600,
 )
 
 
@@ -403,9 +451,9 @@ app.add_middleware(
 async def startup_seed():
     try:
         await _ensure_seeded()
-        logger.info("Seed check completed")
+        logger.info("Startup seed check completed")
     except Exception as e:  # pragma: no cover
-        logger.exception("Seed failed: %s", e)
+        logger.exception("Startup seed failed: %s", e)
 
 
 @app.on_event("shutdown")
